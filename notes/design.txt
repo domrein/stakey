@@ -1,0 +1,24 @@
+STEPS:
+submit calling (who does this?)
+stake presidency approves calling (how many approvals needed?)
+  (approve/deny)
+high council approval
+  (approve/discuss)
+???
+PROFIT
+
+VIEWS:
+calling submission
+  create a calling
+  email stake presidency for approval
+calling review status
+  shows what state the calling is in
+    presidency review
+    high council review (shows who has responded what)
+    complete (shows who responded what)
+  delete? (can be used to clear out old callings?)
+admin
+  manage users
+    who can create callings
+    who is on the stake presidency
+    who is on stake high council
