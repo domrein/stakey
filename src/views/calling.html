@@ -63,6 +63,9 @@
         display: flex;
         flex-direction: column;
       }
+      .indent {
+        padding-left: 50px;
+      }
     </style>
     <!-- Polyfill date component (clicking calendar icon doesn't work in FF) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -70,6 +73,25 @@
     <script>
       webshims.setOptions("forms-ext", {types: "date"});
       webshims.polyfill("forms forms-ext");
+    </script>
+    <script>
+      const toParams = (obj) => {
+        const params = Object.entries(obj).filter(e => e[1].replace(/\s/) !== "").map(e => e.join("=")).join("&");
+        return params;
+      }
+
+      const onCreateCalling = () => {
+        const oReq = new XMLHttpRequest();
+        oReq.addEventListener("load", () => {
+          console.log(this.responseText);
+        });
+        oReq.open("POST", "http://localhost:3000/callings");
+        oReq.send(toParams({
+          firstName: document.getElementById("firstNameInput").value,
+          middleName: document.getElementById("middleNameInput").value,
+          lastName: document.getElementById("lastNameInput").value,
+        }));
+      }
     </script>
   </head>
   <body>
@@ -80,9 +102,9 @@
 
       <h1>Interview Recommendation Form</h1>
       <div class="box horizontal-spaced-items">
-        <div class="vertical-items"><div>First:</div><input type="text"></input></div>
-        <div class="vertical-items"><div>Middle:</div><input type="text"></input></div>
-        <div class="vertical-items"><div>Last:</div><input type="text"></input></div>
+        <div class="vertical-items"><div>First:</div><input id="firstNameInput" type="text"></input></div>
+        <div class="vertical-items"><div>Middle:</div><input id="middleNameInput" type="text"></input></div>
+        <div class="vertical-items"><div>Last:</div><input id="lastNameInput" type="text"></input></div>
       </div>
 
       <h3>Is recommended for the position of</h3>
@@ -162,30 +184,30 @@
           <div><input type="checkbox">High Council Approval:</input></div>
           <div>Date:<input type="date"></input></div>
         </div>
-        <div class="horizontal-start-items">
-          <div>
-            <div><input type="checkbox">Interview<input>By:<input type="text"></input></div>
+        <div>
+          <div class="horizontal-start-items">
+            <div><input type="checkbox">Interview</input>By:<input type="text"></input></div>
             <div>Date:<input type="date"></input></div>
           </div>
-          <div>Results:<input type="text"></input></div>
-          <div>Notes:<input type="text"></input></div>
+          <div class="indent">Results:<input type="text"></input></div>
+          <div class="indent">Notes:<input type="text"></input></div>
         </div>
         <div class="horizontal-start-items">
-          <div><input type="checkbox">Incumbent<input>Released By:<input type="text"></input></div>
+          <div><input type="checkbox">Incumbent</input>Released By:<input type="text"></input></div>
           <div>Date:<input type="date"></input></div>
         </div>
         <div class="horizontal-start-items">
-          <div><input type="checkbox">Sustained<input>By:<input type="text"></input></div>
+          <div><input type="checkbox">Sustained</input>By:<input type="text"></input></div>
           <div>Date:<input type="date"></input></div>
         </div>
         <div class="horizontal-start-items">
-          <div><input type="checkbox">Set Apart<input>By:<input type="text"></input></div>
+          <div><input type="checkbox">Set Apart</input>By:<input type="text"></input></div>
           <div>Date:<input type="date"></input></div>
         </div>
       </div>
       <!-- <p>{{fortune}}</p> -->
       <div class="horizontal-spaced-items">
-        <button>Create Calling</button>
+        <button onclick="onCreateCalling()">Create Calling</button>
       </div>
     </div>
   </body>

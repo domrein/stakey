@@ -1,8 +1,10 @@
-candidate, position, currentHolder, recommender, recommendedDate, submitter, submittedDate, reason, templeWorthy, ward, currentCalling, currentCallingDuration, phone, altPhone, spouse, spouseCalling, bishopConsulted, bishopConsultedDate, highCouncilRepConsulted, highCouncilRepConsultedDate, stakePresidencyApproval, statePresidencyApprovalDate, highCouncilApproval, highCouncilApprovalDate, interviewed, interviewer, interviewResults, interviewNotes, interviewDate, incumbent, incumbentReleaser, incumbentReleaseDate, sustained, sustainer, sustainedDate, setApart, setAparter, setApartDate
+-- candidate, position, currentHolder, recommender, recommendedDate, submitter, submittedDate, reason, templeWorthy, ward, currentCalling, currentCallingDuration, phone, altPhone, spouse, spouseCalling, bishopConsulted, bishopConsultedDate, highCouncilRepConsulted, highCouncilRepConsultedDate, stakePresidencyApproval, statePresidencyApprovalDate, highCouncilApproval, highCouncilApprovalDate, interviewed, interviewer, interviewResults, interviewNotes, interviewDate, incumbent, incumbentReleaser, incumbentReleaseDate, sustained, sustainer, sustainedDate, setApart, setAparter, setApartDate
 
-candidate
+candidates
   firstName:text, middleName:text, lastName:text, calling:calling, callingStartDate:date, ward:ward, templeWorthy:bool, phone:text, altPhone:text, spouse:candidate
-calling
-  name:text, currentHolder:candidate, recommendation:action, submission:action, reason:text,
-action
-ward
+callings
+  name:text, currentHolder:candidate, recommendation:action, submission:action, reason:text, bishopConsultation, highCouncilRepConsultation, stakePresidencyApproval, incumbentRelease, sustaining, settingApart, interview
+actions
+wards
+interviews
+approvers
