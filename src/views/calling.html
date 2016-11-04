@@ -20,7 +20,8 @@
         background-image: url("/public/background.jpg");
         background-repeat: no-repeat;
         background-position: center;
-        background-size: cover;
+        background-size: auto;
+        background-attachment: fixed;
       }
       #content {
         background-color: rgba(255, 255, 255, 0.9);
@@ -95,21 +96,26 @@
     </script>
   </head>
   <body>
-
     <div id="content">
+      <a href="/callings">View all Callings</a>
+      {{#if deletable}}
+        <div>
+          <button>DELETE</button>
+        </div>
+      {{/if}}
       <div id="hc">HC<input type="text"></input></div>
       <h3>Taylorsville Utah North Stake</h3>
 
       <h1>Interview Recommendation Form</h1>
       <div class="box horizontal-spaced-items">
-        <div class="vertical-items"><div>First:</div><input id="firstNameInput" type="text"></input></div>
-        <div class="vertical-items"><div>Middle:</div><input id="middleNameInput" type="text"></input></div>
-        <div class="vertical-items"><div>Last:</div><input id="lastNameInput" type="text"></input></div>
+        <div class="vertical-items"><div>First:</div><input id="firstNameInput" type="text" value="{{firstName}}"></input></div>
+        <div class="vertical-items"><div>Middle:</div><input id="middleNameInput" type="text" value="{{middleName}}"></input></div>
+        <div class="vertical-items"><div>Last:</div><input id="lastNameInput" type="text" value="{{lastName}}"></input></div>
       </div>
 
       <h3>Is recommended for the position of</h3>
       <div class="box">
-        <div>Position:<input type="text"></input></div>
+        <div>Position:<input type="text" value="{{position}}"></input></div>
       </div>
 
       <h3>Currently held by</h3>

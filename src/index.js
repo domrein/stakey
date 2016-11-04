@@ -71,6 +71,8 @@ server.route({
   method: 'GET',
   path: '/callings',
   handler: function (request, reply) {
+    // pull all the stuff from the database
+    // display in table
     // reply.view('index');
     reply.view('callings', { fortune: 'You will eat a cookie' });
   },
@@ -83,7 +85,13 @@ server.route({
   handler: function (request, reply) {
     // look up all info for calling and put into read only mode
     // reply.view('index');
-    reply.view('calling', { fortune: 'You will eat a cookie' });
+    reply.view('calling', {
+      firstName: 'Ash',
+      middleName: 'Dash',
+      lastName: 'Ketchum',
+      position: 'Stake Technology Specialist',
+      deletable: true,
+    });
   },
 });
 
@@ -151,14 +159,14 @@ server.route({
         setApartBy,
         setApartDate
       ) VALUES (
-        'paul',
-        'timothy',
-        'milham',
+        'ash',
+        'mercury',
+        'ketchum',
         'Pokemaster',
         'Ash Ketchum',
-        'Harold Shewell',
+        'Brock Harrison',
         CURDATE(),
-        'Harold Shewell',
+        'Brock Harrison',
         CURDATE(),
         'You know its his destiny.',
         1,
@@ -167,7 +175,7 @@ server.route({
         CURDATE(),
         '555-5555',
         '555-5555',
-        'Harmony Milham',
+        'Misty Joto',
         'Young Womens President',
         1,
         CURDATE(),
