@@ -1,12 +1,12 @@
 {
-  "name": "stakecalling",
+  "name": "stakey",
   "version": "0.0.1",
   "description": "Creation and approval system for stake callings",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "dev": "nodemon -e js,json,html src/index.js"
+    "dev": "NODE_ENV=dev nodemon --inspect -e js,json src/index.js --exec 'node'"
   },
   "keywords": [
     "LDS",
@@ -16,14 +16,16 @@
   "author": "Paul Milham",
   "license": "ISC",
   "dependencies": {
-    "handlebars": "^4.0.5",
-    "hapi": "^14.1.0",
-    "inert": "^4.0.1",
-    "joi": "^9.0.4",
+    "body-parser": "^1.16.1",
+    "express": "^4.14.1",
     "mysql": "^2.11.1",
-    "vision": "^4.1.0"
+    "pug": "^2.0.0-beta11",
+    "tean": "^5.0.0"
   },
   "devDependencies": {
     "nodemon": "^1.10.0"
+  },
+  "engines": {
+    "node" : ">=7.6.0"
   }
 }

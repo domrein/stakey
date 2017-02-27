@@ -1,52 +1,50 @@
-CREATE TABLE `callingForms` (
+CREATE TABLE `users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `firstName` varchar(255) COLLATE utf8_bin NOT NULL,
-  `middleName` varchar(255) COLLATE utf8_bin NOT NULL,
-  `lastName` varchar(255) COLLATE utf8_bin NOT NULL,
-  `position` varchar(255) COLLATE utf8_bin NOT NULL,
-  `currentPositionHolder` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `recommendedBy` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `recommendedDate` date DEFAULT NULL,
-  `submittedBy` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `submittedDate` date DEFAULT NULL,
-  `reason` varchar(1024) COLLATE utf8_bin DEFAULT NULL,
-  `templeWorthy` tinyint(3) unsigned DEFAULT NULL,
-  `wardId` int(10) unsigned DEFAULT NULL,
-  `currentCalling` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `currentCallingStartDate` date DEFAULT NULL,
-  `phone` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `altPhone` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `spouse` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `spouseCurrentCalling` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `bishopConsulted` tinyint(3) unsigned DEFAULT NULL,
-  `bishopConsultedDate` date DEFAULT NULL,
-  `highCouncilRepConsulted` tinyint(3) unsigned DEFAULT NULL,
-  `highCouncilRepConsultedDate` date DEFAULT NULL,
-  `stakePresidencyApproval` tinyint(3) unsigned DEFAULT NULL,
-  `stakePresidencyApprovalDate` date DEFAULT NULL,
-  `highCouncilApproval` tinyint(3) unsigned DEFAULT NULL,
-  `highCouncilApprovalDate` date DEFAULT NULL,
-  `interviewed` tinyint(3) DEFAULT NULL,
-  `interviewer` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `interviewDate` date DEFAULT NULL,
-  `interviewResults` varchar(1024) COLLATE utf8_bin DEFAULT NULL,
-  `interviewNotes` varchar(1024) COLLATE utf8_bin DEFAULT NULL,
-  `incumbentReleased` tinyint(3) unsigned DEFAULT NULL,
-  `incumbentReleaser` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `incumbentReleaseDate` date DEFAULT NULL,
-  `sustained` tinyint(3) unsigned DEFAULT NULL,
-  `sustainer` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `sustainedDate` date DEFAULT NULL,
-  `setApart` tinyint(3) unsigned DEFAULT NULL,
-  `setApartBy` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `setApartDate` date DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  `firstName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `lastName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `email` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `passwordHash` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `salt` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
 
-CREATE TABLE `wards` (
+CREATE TABLE `callings` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `name` varchar(255) CHARACTER SET utf8 NOT NULL,
+  `firstName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `middleName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `lastName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `position` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `reason` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `templeWorthy` tinyint(3) unsigned DEFAULT NULL,
+  `ward` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `currentCalling` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `phoneNumber` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `bishopConsulted` tinyint(3) unsigned DEFAULT NULL,
+  `councilRepConsulted` tinyint(3) unsigned DEFAULT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+
+CREATE TABLE `approvals` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `callingId` int(10) unsigned NOT NULL,
+  `approverId` int(10) unsigned NOT NULL,
+  `approved` tinyint(3) unsigned DEFAULT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+  KEY `approverId_idx` (`approverId`),
+  KEY `callingId_idx` (`callingId`),
+  CONSTRAINT `approvalsApproverId` FOREIGN KEY (`approverId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `approvalsCallingId` FOREIGN KEY (`callingId`) REFERENCES `callings` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+
+CREATE TABLE `approvalLinks` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `callingId` int(10) unsigned NOT NULL,
+  `hash` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `callingId_idx` (`callingId`),
+  CONSTRAINT `approvalLinksCallingId` FOREIGN KEY (`callingId`) REFERENCES `callings` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin

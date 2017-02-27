@@ -1,0 +1,61 @@
+doctype html
+html
+  head
+    title Stake Calling Approval
+    block head
+      style.
+        input {
+          outline: none;
+        }
+        body {
+          display: flex;
+          justify-content: center;
+          font: 13px "Open Sans";
+          background-image: url("/public/background.jpg");
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: auto;
+          background-attachment: fixed;
+        }
+        #content {
+          background-color: rgba(255, 255, 255, 0.9);
+          border-radius: 5px;
+          border: 2px solid #3C4D71;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          flex-grow: 1;
+          max-width: 1000px;
+          min-width: 700px;
+          position: relative;
+          padding: 10px;
+        }
+        h1 {
+          text-align: center;
+        }
+        h3 {
+          text-align: center;
+        }
+        .box {
+          border-radius: 5px;
+          border: 2px solid #3C4D71;
+          padding: 5px;
+        }
+        .horizontal-spaced-items {
+          display: flex;
+          justify-content: space-around;
+        }
+        .horizontal-start-items {
+          display: flex;
+          justify-content: flex-start;
+        }
+        .vertical-items {
+          display: flex;
+          flex-direction: column;
+        }
+        .indent {
+          padding-left: 50px;
+        }
+  body
+    #content
+      block content

@@ -1,262 +1,235 @@
-'use strict';
+"use strict";
 
-const Path = require('path');
-const Hapi = require('hapi');
-const Hoek = require('hoek');
-const Inert = require('inert');
-const Joi = require('joi');
-const MySql = require ('mysql');
+const config = require("../config.json");
 
-const connection = MySql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'stakey',
+const express = require("express");
+const bodyParser = require("body-parser");
+const mysql = require ("mysql");
+const tean = require("tean");
+
+const stakeyDb = mysql.createPool({
+  host: config.db.host,
+  user: config.db.user,
+  password: config.db.password,
+  database: config.db.database,
 });
 
-const server = new Hapi.Server({
-  connections: {
-    routes: {
-      files: {
-        relativeTo: Path.join(__dirname, '../public'),
-      },
-    },
-  },
-});
-server.connection({port: 3000});
+tean.addBaseTypes();
 
-server.register(Inert, () => {});
+const app = express();
 
-// SERVER STATIC ASSETS
-server.route({
-  method: 'GET',
-  path: '/public/{param*}',
-  handler: {
-    directory: {
-      path: '../public/',
-      redirectToSlash: true,
-      index: true,
-    },
-  },
-});
+app.set("views", `${__dirname}/views`);
+app.set("view engine", "pug");
 
-server.register(require('vision'), (err) => {
-  Hoek.assert(!err, err);
+app.use("/public", express.static(`${__dirname}/public`));
 
-  server.views({
-    engines: {
-      html: require('handlebars'),
-    },
-    relativeTo: __dirname,
-    path: './views',
-    // layoutPath: './views/layout',
-    // helpersPath: './views/helpers',
-    // compileMode: 'async',
-  });
-});
+// BUG: the default session store is in memory
+//   it does not scale beyound a single process
+//   implement redis sessions https://www.npmjs.com/package/connect-redis
+// app.use(session({
+//   secret: crypto.generateSalt(50),
+// })); // BUG: This secret generation will break if we have multiple processes
+
+// make sure session data is initialized
+// app.use((req, res, next) => {
+//   if (!req.session.userData) {
+//     req.session.userData = {authLevel: validate.authLevels.GUEST};
+//   }
+//   if (!req.session.userData.hasOwnProperty("username")) {
+//     req.session.userData.username = "";
+//   }
+//   next();
+// });
+
+app.use(bodyParser.json({type: "*/*"}));
 
 // VIEWS
 // create a new calling
-server.route({
-  method: 'GET',
-  path: '/callings/create',
-  handler: function (request, reply) {
-    // reply.view('index');
-    reply.view('calling', { fortune: 'You will eat a cookie' });
-  },
+app.get("/calling", (req, res) => {
+  // TODO: require auth
+  res.render("calling.pug", {
+    // TEST DATA
+    // firstName: "Paul",
+    // middleName: "Timothy",
+    // lastName: "Milham",
+    // position: "Stake Cookie Tester",
+    // reason: "Because he is the best cookie taster in town.",
+    // templeWorthy: true,
+    // ward: "mb2",
+    // currentCalling: "Stake Technology Specialist",
+    // phoneNumber: "801-830-7917",
+    // bishopConsulted: true,
+    // councilRepConsulted: false,
+  });
 });
 
 // view all callings
-server.route({
-  method: 'GET',
-  path: '/callings',
-  handler: function (request, reply) {
-    // pull all the stuff from the database
-    // display in table
-    // reply.view('index');
-    reply.view('callings', { fortune: 'You will eat a cookie' });
-  },
+app.get("/callings", (req, res) => {
+  // TODO: require auth
+  // pull all the stuff from the database
+  stakeyDb.query(`
+    SELECT
+    	c.id,
+      c.firstName,
+      c.lastName,
+      c.position,
+      c.state,
+      (
+		    SELECT COUNT(id)
+        FROM approvals a
+        WHERE a.callingId = c.id AND a.approved = 1
+    	) AS approvalCount,
+      (
+  		  SELECT COUNT(id)
+        FROM approvals a
+        WHERE a.callingId = c.id AND a.approved = 0
+    	) AS denialCount
+    FROM callings c
+    WHERE c.state != 2
+  `, [], (err, rows) => {
+    if (err) {
+      res.status(500).send();
+    }
+    else {
+      // display in table
+      res.render("callings.pug", {
+        pendingCallings: rows.filter(r => r.state === 0),
+        readyCallings: rows.filter(r => r.state === 1),
+      });
+    }
+  });
 });
 
 // view a specific calling
-server.route({
-  method: 'GET',
-  path: '/callings/{id}',
-  handler: function (request, reply) {
+app.get("/calling/:id", async (req, res) => {
+  // TODO: require auth
+  try {
+    const data = await tean.normalize({id: "int"}, req.params);
     // look up all info for calling and put into read only mode
-    // reply.view('index');
-    reply.view('calling', {
-      firstName: 'Ash',
-      middleName: 'Dash',
-      lastName: 'Ketchum',
-      position: 'Stake Technology Specialist',
-      deletable: true,
+    stakeyDb.query(`
+      SELECT
+      firstName,
+      middleName,
+      lastName,
+      position,
+      reason,
+      templeWorthy,
+      ward,
+      currentCalling,
+      phoneNumber,
+      bishopConsulted,
+      councilRepConsulted
+      FROM callings WHERE id = ? LIMIT 1
+    `, [data.id], (err, rows) => {
+      if (err) {
+        res.status(500).send();
+      }
+      else if (!rows.length) {
+        res.status(404).send();
+      }
+      else {
+        res.render("calling.pug", {
+          viewMode: true,
+          firstName: rows[0].firstName,
+          middleName: rows[0].middleName,
+          lastName: rows[0].lastName,
+          position: rows[0].position,
+          reason: rows[0].reason,
+          templeWorthy: rows[0].templeWorthy === 1 ? true : rows[0].templeWorthy === false ? 0 : null,
+          ward: rows[0].ward,
+          currentCalling: rows[0].currentCalling,
+          phoneNumber: rows[0].phoneNumber,
+          bishopConsulted: !!rows[0].bishopConsulted,
+          councilRepConsulted: !!rows[0].councilRepConsulted,
+        });
+      }
     });
-  },
+  }
+  catch (err) {
+    console.log(err);
+    res.status(400).send();
+  }
 });
 
-// admin (add/remove/edit users, update wards/branches)
-server.route({
-  method: 'GET',
-  path: '/admin',
-  handler: function (request, reply) {
-    // reply.view('index');
-    reply.view('admin', { fortune: 'You will eat a cookie' });
-  },
+app.get("approval/:id/:state", (req, res) => {
+  // look up current approval state
+  // once link has been used, it's deleted and the approval is created
+  res.render("approval.pug", {
+    state: 0,
+  });
 });
 
 // API CALLS
 // create a new calling
-server.route({
-  method: 'POST',
-  path: '/callings',
-  handler: function (request, reply) {
-    console.log("payload: ");
-    console.log(request.payload);
-    // shove all that garbage into the database
-    connection.connect();
+app.post("/calling", async (req, res) => {
+  try {
+    const data = await tean.normalize({
+      firstName: "string(45)",
+      middleName: "string(45)",
+      lastName: "string(45)",
+      position: "string(45)",
+      reason: "string(255)",
+      templeWorthy: "bool!null",
+      ward: "string(mb2,mb3,t3,t8,t13,t14,t15)",
+      currentCalling: "string(45)",
+      phoneNumber: "string(45)",
+      bishopConsulted: "bool",
+      councilRepConsulted: "bool",
+    }, req.body);
 
-    connection.query(`
-      INSERT INTO stakey.callingForms (
+    // massage data for database
+    if (data.templeWorthy === false) {
+      data.templeWorthy = 0;
+    }
+    else if (data.templeWorthy === true) {
+      data.templeWorthy = 1;
+    }
+    data.bishopConsulted = data.bishopConsulted ? 1 : 0;
+    data.councilRepConsulted = data.councilRepConsulted ? 1 : 0;
+
+    stakeyDb.query(`
+      INSERT INTO callings (
         firstName,
         middleName,
         lastName,
         position,
-        currentPositionHolder,
-        recommendedBy,
-        recommendedDate,
-        submittedBy,
-        submittedDate,
         reason,
         templeWorthy,
-        wardId,
+        ward,
         currentCalling,
-        currentCallingStartDate,
-        phone,
-        altPhone,
-        spouse,
-        spouseCurrentCalling,
+        phoneNumber,
         bishopConsulted,
-        bishopConsultedDate,
-        highCouncilRepConsulted,
-        highCouncilRepConsultedDate,
-        stakePresidencyApproval,
-        stakePresidencyApprovalDate,
-        highCouncilApproval,
-        highCouncilApprovalDate,
-        interviewed,
-        interviewer,
-        interviewDate,
-        interviewResults,
-        interviewNotes,
-        incumbentReleased,
-        incumbentReleaser,
-        incumbentReleaseDate,
-        sustained,
-        sustainer,
-        sustainedDate,
-        setApart,
-        setApartBy,
-        setApartDate
-      ) VALUES (
-        'ash',
-        'mercury',
-        'ketchum',
-        'Pokemaster',
-        'Ash Ketchum',
-        'Brock Harrison',
-        CURDATE(),
-        'Brock Harrison',
-        CURDATE(),
-        'You know its his destiny.',
-        1,
-        1,
-        'Hymnbook straightener',
-        CURDATE(),
-        '555-5555',
-        '555-5555',
-        'Misty Joto',
-        'Young Womens President',
-        1,
-        CURDATE(),
-        1,
-        CURDATE(),
-        1,
-        CURDATE(),
-        1,
-        CURDATE(),
-        1,
-        'Jesse',
-        CURDATE(),
-        'Unable to steal Pokemon.',
-        'Must plan another heist.',
-        1,
-        'James',
-        CURDATE(),
-        1,
-        'Brock',
-        CURDATE(),
-        1,
-        'Misty',
-        CURDATE()
-      )
-    `, function(err, rows, fields) {
-      if (err) throw err;
-      connection.end();
+        councilRepConsulted
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `, [
+      data.firstName,
+      data.middleName,
+      data.lastName,
+      data.position,
+      data.reason,
+      data.templeWorthy,
+      data.ward,
+      data.currentCalling,
+      data.phoneNumber,
+      data.bishopConsulted,
+      data.councilRepConsulted,
+    ], err => {
+      if (err) {
+        console.log(err);
+        res.status(500).send();
+      }
+      else {
+        res.send();
+      }
     });
-
-  },
-  config: {
-    validate: {
-      payload: {
-        firstName: Joi.string().max(255),
-        middleName: Joi.string().max(255),
-        lastName: Joi.string().max(255),
-        // position: Joi.string().max(255),
-        // currentPositionHolder: Joi.string().max(255),
-        // recommendedBy: Joi.string().max(255),
-        // recommendedDate: Joi.number().integer().positive(),
-        // submittedBy: Joi.string().max(255),
-        // submittedDate: Joi.number().integer().positive(),
-        // reason: Joi.string().max(255),
-        // templeWorthy: Joi.number().integer().positive().max(1),
-        // wardId: Joi.number().integer().positive().max(255),
-        // currentCalling: Joi.string().max(255),
-        // currentCallingStartDate: Joi.number().integer().positive(),
-        // phone: Joi.string().max(255),
-        // altPhone: Joi.string().max(255),
-        // spouse: Joi.string().max(255),
-        // spouseCurrentCalling: Joi.string().max(255),
-        // bishopConsulted: Joi.number().integer().positive().max(1),
-        // bishopConsultedDate: Joi.number().integer().positive(),
-        // highCouncilRepConsulted: Joi.number().integer().positive().max(1),
-        // highCouncilRepConsultedDate: Joi.number().integer().positive(),
-        // stakePresidencyApproval: Joi.number().integer().positive().max(1),
-        // stakePresidencyApprovalDate: Joi.number().integer().positive(),
-        // highCouncilApproval: Joi.number().integer().positive().max(1),
-        // highCouncilApprovalDate: Joi.number().integer().positive(),
-        // interviewed: Joi.number().integer().positive().max(1),
-        // interviewer: Joi.string().max(255),
-        // interviewDate: Joi.number().integer().positive(),
-        // interviewResults: Joi.string().max(1024),
-        // interviewNotes: Joi.string().max(1024),
-        // incumbentReleased: Joi.number().integer().positive().max(1),
-        // incumbentReleaser: Joi.string().max(255),
-        // incumbentReleaseDate: Joi.number().integer().positive(),
-        // sustained: Joi.number().integer().positive().max(1),
-        // sustainer: Joi.string().max(255),
-        // sustainedDate: Joi.number().integer().positive(),
-        // setApart: Joi.number().integer().positive().max(1),
-        // setApartBy: Joi.string().max(255),
-        // setApartDate: Joi.number().integer().positive(),
-      },
-    },
-  },
-})
-
-server.start((err) => {
-    if (err) {
-        throw err;
-    }
-    console.log('Server running at:', server.info.uri);
+  }
+  catch (err) {
+    console.log(err);
+    console.log(err.join());
+    res.status(400).send();
+    return;
+  }
 });
+
+app.listen(config.port);
+console.log(`app listening on port ${config.port}`);

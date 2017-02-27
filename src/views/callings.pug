@@ -1,0 +1,63 @@
+extends page.pug
+
+append head
+  style.
+    tbody tr:nth-child(even) {
+      background-color: rgba(200, 200, 200, 0.5);
+    }
+    th {
+      width: 25%;
+    }
+
+    table {
+      border-collapse: collapse
+    }
+
+    .approved {
+      background-color: rgba(100, 240, 100, 0.75);
+    }
+    .pending {
+      background-color:rgba(170, 100, 240, 0.75);
+    }
+    .denied {
+      background-color:rgba(240, 100, 100, 0.75);
+    }
+
+append content
+  div(style="display: flex; flex-direction: row; justify-content: space-between;")
+    a(href="/calling") Create a Calling
+    #hc HC
+      input(type="text")
+  h3 Taylorsville Utah North Stake
+
+  h1 Calling Statuses
+  h2 Pending Callings
+  table(style="width: 100%; text-align: center;")
+    tr
+      th Candidate
+      th Position
+      th High Council Approvals
+      th High Council Denials
+      th Total
+    each approval in pendingCallings
+      tr(onclick=`window.location = "calling/${approval.id}"` style="cursor: pointer;")
+        td #{approval.firstName} #{approval.lastName}
+        td #{approval.position}
+        td #{approval.approvalCount}
+        td #{approval.denialCount}
+        td #{approval.approvalCount + approval.denialCount}
+  h2 Ready for Interview
+  table(style="width: 100%; text-align: center;")
+    tr
+      th Candidate
+      th Position
+      th High Council Approvals
+      th High Council Denials
+      th Total
+    each approval in readyCallings
+      tr
+        td #{approval.firstName} #{approval.lastName}
+        td #{approval.position}
+        td #{approval.approvalCount}
+        td #{approval.denialCount}
+        td #{approval.approvalCount + approval.denialCount}

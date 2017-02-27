@@ -1,0 +1,107 @@
+extends page.pug
+
+append head
+  //- Polyfill date component (clicking calendar icon doesn't work in FF)
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.0/jquery.min.js")
+  script(src="https://cdnjs.cloudflare.com/ajax/libs/webshim/1.15.10/minified/polyfiller.js")
+  script.
+    webshims.setOptions("forms-ext", {types: "date"});
+    webshims.polyfill("forms forms-ext");
+  script.
+    const onCreateCalling = () => {
+      let templeWorthy = null;
+      const selected = document.querySelector("input[name='templeWorthy']:checked");
+      if (selected) {
+        templeWorthy = selected.value === "yes" ? true : false;
+      }
+
+      const oReq = new XMLHttpRequest();
+      oReq.addEventListener("load", () => {
+        console.log(this.responseText);
+      });
+      oReq.open("POST", "http://localhost:3000/calling");
+      oReq.send(JSON.stringify({
+        firstName: document.getElementById("firstNameInput").value,
+        middleName: document.getElementById("middleNameInput").value,
+        lastName: document.getElementById("lastNameInput").value,
+        position: document.getElementById("positionInput").value,
+        reason: document.getElementById("reasonInput").value,
+        templeWorthy,
+        ward: document.querySelector("input[name='ward']:checked").value,
+        currentCalling: document.getElementById("currentCallingInput").value,
+        phoneNumber: document.getElementById("phoneNumberInput").value,
+        bishopConsulted: document.getElementById("bishopConsultedInput").checked,
+        councilRepConsulted: document.getElementById("councilRepConsultedInput").checked,
+      }));
+    };
+
+append content
+  a(href="/callings") View all Callings
+  if deletable
+    div
+      button DELETE
+  h3 Taylorsville Utah North Stake
+
+  h1 Interview Recommendation Form
+  .box.horizontal-spaced-items
+    .vertical-items
+      div First:
+      input#firstNameInput(type="text" value=`${firstName || ""}`)
+    .vertical-items
+      div Middle:
+      input#middleNameInput(type="text" value=`${middleName || ""}`)
+    .vertical-items
+      div Last:
+      input#lastNameInput(type="text" value=`${lastName || ""}`)
+
+  h3 Is recommended for the position of
+  .box
+    div Position:
+    input#positionInput(type="text" value=`${position || ""}`)
+
+  h3 Reason for change and other pertinent information about this recommendation:
+  input#reasonInput(type="text" value=`${reason || ""}` size=4)
+
+  h3 Candidate Information:
+  .box
+    div Temple Worthy:
+      input#yes(type="radio" name="templeWorthy" value="yes" checked=templeWorthy)
+      label(for="yes") Yes
+      input#no(type="radio" name="templeWorthy" value="no" checked=templeWorthy === false)
+      label(for="no") No
+      input#unknown(type="radio" name="templeWorthy" value="unknown" checked=templeWorthy !== true && templeWorthy !== false)
+      label(for="unknown") Unknown
+    div Ward / Branch:
+      input#mb2(type="radio" name="ward" value="mb2" checked=ward === "mb2")
+      label(for="mb2") MB2
+      input#mb3(type="radio" name="ward" value="mb3" checked=ward === "mb3")
+      label(for="mb3") MB3
+      input#t3(type="radio" name="ward" value="t3" checked=ward === "t3")
+      label(for="t3") T3
+      input#t8(type="radio" name="ward" value="t8" checked=ward === "t8")
+      label(for="t8") T8
+      input#t13(type="radio" name="ward" value="t13" checked=ward === "t13")
+      label(for="t13") T13
+      input#t14(type="radio" name="ward" value="t14" checked=ward === "t14")
+      label(for="t14") T14
+      input#t15(type="radio" name="ward" value="t15" checked=ward === "t15")
+      label(for="t15") T15
+    .horizontal-start-items
+      div Current Calling:
+      input#currentCallingInput(type="text" value=`${currentCalling || ""}`)
+    .horizontal-start-items
+      div Phone Number:
+      input#phoneNumberInput(type="text" value=`${phoneNumber || ""}`)
+
+  h3 Checklist:
+  .box
+    .horizontal-start-items
+      div Bishop / Branch President Consulted:
+        input#bishopConsultedInput(type="checkbox" checked=bishopConsulted)
+    .horizontal-start-items
+      div High Council Representative Consulted:
+        input#councilRepConsultedInput(type="checkbox" checked=councilRepConsulted)
+  //- p #{fortune}
+  if !viewMode
+    .horizontal-spaced-items
+      button(onclick="onCreateCalling()") Create Calling
