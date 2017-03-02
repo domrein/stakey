@@ -23,7 +23,7 @@ exports.add = (app, stakeyDb) => {
   });
 
   // view a specific calling
-  app.get("/calling/:id", async (req, res) => {
+  app.get("/calling/:id", async (req, res, next) => {
     // TODO: require auth
     try {
       const data = await tean.normalize({id: "int"}, req.params);
@@ -48,7 +48,7 @@ exports.add = (app, stakeyDb) => {
           res.status(500).send();
         }
         else if (!rows.length) {
-          res.status(404).send();
+          next();
         }
         else {
           const calling = rows[0];

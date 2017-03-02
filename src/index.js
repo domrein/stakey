@@ -47,5 +47,9 @@ require("./routes/callings.js").add(app, stakeyDb);
 require("./routes/calling.js").add(app, stakeyDb);
 require("./routes/approval.js").add(app, stakeyDb);
 
+app.use((req, res, next) => {
+  res.render("missing.pug");
+})
+
 app.listen(config.port);
 console.log(`app listening on port ${config.port}`);
