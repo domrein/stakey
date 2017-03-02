@@ -40,7 +40,7 @@ append content
       th High Council Denials
       th Total
     each approval in pendingCallings
-      tr(onclick=`window.location = "calling/${approval.id}"` style="cursor: pointer;")
+      tr(onclick=`window.location = "/calling/${approval.id}"` style="cursor: pointer;")
         td #{approval.firstName} #{approval.lastName}
         td #{approval.position}
         td #{approval.approvalCount}
