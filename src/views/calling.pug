@@ -16,8 +16,9 @@ append head
       }
 
       const oReq = new XMLHttpRequest();
-      oReq.addEventListener("load", () => {
-        console.log(this.responseText);
+      oReq.addEventListener("load", function() {
+        // console.log(this.responseText);
+        window.location = "/callings";
       });
       oReq.open("POST", "http://localhost:3000/calling");
       oReq.send(JSON.stringify({
