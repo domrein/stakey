@@ -3,6 +3,25 @@
 const tean = require("tean");
 
 exports.add = (app, stakeyDb) => {
+  // create a new calling
+  app.get("/calling", (req, res) => {
+    // TODO: require auth
+    res.render("calling.pug", {
+      // TEST DATA
+      // firstName: "Paul",
+      // middleName: "Timothy",
+      // lastName: "Milham",
+      // position: "Stake Cookie Tester",
+      // reason: "Because he is the best cookie taster in town.",
+      // templeWorthy: true,
+      // ward: "mb2",
+      // currentCalling: "Stake Technology Specialist",
+      // phoneNumber: "801-830-7917",
+      // bishopConsulted: true,
+      // councilRepConsulted: false,
+    });
+  });
+
   // view a specific calling
   app.get("/calling/:id", async (req, res) => {
     // TODO: require auth
@@ -11,6 +30,7 @@ exports.add = (app, stakeyDb) => {
       // look up all info for calling and put into read only mode
       stakeyDb.query(`
         SELECT
+        id,
         firstName,
         middleName,
         lastName,
@@ -31,19 +51,21 @@ exports.add = (app, stakeyDb) => {
           res.status(404).send();
         }
         else {
+          const calling = rows[0];
           res.render("calling.pug", {
+            id: calling.id,
             viewMode: true,
-            firstName: rows[0].firstName,
-            middleName: rows[0].middleName,
-            lastName: rows[0].lastName,
-            position: rows[0].position,
-            reason: rows[0].reason,
-            templeWorthy: rows[0].templeWorthy === 1 ? true : rows[0].templeWorthy === false ? 0 : null,
-            ward: rows[0].ward,
-            currentCalling: rows[0].currentCalling,
-            phoneNumber: rows[0].phoneNumber,
-            bishopConsulted: !!rows[0].bishopConsulted,
-            councilRepConsulted: !!rows[0].councilRepConsulted,
+            firstName: calling.firstName,
+            middleName: calling.middleName,
+            lastName: calling.lastName,
+            position: calling.position,
+            reason: calling.reason,
+            templeWorthy: calling.templeWorthy === 1 ? true : calling.templeWorthy === false ? 0 : null,
+            ward: calling.ward,
+            currentCalling: calling.currentCalling,
+            phoneNumber: calling.phoneNumber,
+            bishopConsulted: !!calling.bishopConsulted,
+            councilRepConsulted: !!calling.councilRepConsulted,
           });
         }
       });
@@ -52,25 +74,6 @@ exports.add = (app, stakeyDb) => {
       console.log(err);
       res.status(400).send();
     }
-  });
-
-  // create a new calling
-  app.get("/calling", (req, res) => {
-    // TODO: require auth
-    res.render("calling.pug", {
-      // TEST DATA
-      // firstName: "Paul",
-      // middleName: "Timothy",
-      // lastName: "Milham",
-      // position: "Stake Cookie Tester",
-      // reason: "Because he is the best cookie taster in town.",
-      // templeWorthy: true,
-      // ward: "mb2",
-      // currentCalling: "Stake Technology Specialist",
-      // phoneNumber: "801-830-7917",
-      // bishopConsulted: true,
-      // councilRepConsulted: false,
-    });
   });
 
   // create a new calling
@@ -140,7 +143,31 @@ exports.add = (app, stakeyDb) => {
       console.log(err);
       console.log(err.join());
       res.status(400).send();
-      return;
+    }
+  });
+
+  // delete a calling
+  app.delete("/calling/:id", async (req, res) => {
+    // TODO: only admins should be able to delete a calling
+    try {
+      const data = await tean.normalize({id: "int"}, req.params);
+      res.status(200).send();
+
+      stakeyDb.query(`
+        DELETE FROM callings WHERE id = ?
+      `, [data.id], (err, result) => {
+        if (err) {
+          res.status(500).send();
+        }
+        else {
+          res.status(200).send();
+        }
+      });
+    }
+    catch (err) {
+      console.log(err);
+      console.log(err.join());
+      res.status(400).send();
     }
   });
 };

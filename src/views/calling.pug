@@ -36,11 +36,21 @@ append head
       }));
     };
 
+    const onDeleteCalling = () => {
+      const oReq = new XMLHttpRequest();
+      oReq.addEventListener("load", function() {
+        // console.log(this.responseText);
+        window.location = "/callings";
+      });
+      oReq.open("DELETE", "http://localhost:3000/calling/#{id}");
+      oReq.send();
+    };
+
 append content
-  a(href="/callings") View all Callings
-  if deletable
-    div
-      button DELETE
+  div(style="display: flex; flex-direction: row; justify-content: space-between;")
+    a(href="/callings") View all Callings
+    if viewMode
+      button(onclick="onDeleteCalling()") DELETE CALLING
   h3 Taylorsville Utah North Stake
 
   h1 Interview Recommendation Form
