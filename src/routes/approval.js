@@ -17,8 +17,7 @@ exports.add = app => {
       res.status(400).send();
       return;
     }
-    console.log("-----------");
-    console.log(data);
+
     // look up current approval state
     let approval = null;
     try {
