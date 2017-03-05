@@ -1,0 +1,13 @@
+extends page.pug
+
+append content
+  if approved === null && newApproved === 0
+    div Your denial has been recorded for #{candidate} for #{position}
+  else if approved === null && newApproved === 1
+    div Your approval has been recorded for #{candidate} for #{position}
+  else if approved === 0
+    div You already denied #{candidate} for #{position}
+  else if approved === 1
+    div You already approved #{candidate} for #{position}
+  else
+    div You have neither approved nor denied #{candidate} for #{position}

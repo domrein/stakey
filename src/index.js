@@ -4,15 +4,7 @@ const config = require("../config.json");
 
 const express = require("express");
 const bodyParser = require("body-parser");
-const mysql = require ("mysql");
 const tean = require("tean");
-
-const stakeyDb = mysql.createPool({
-  host: config.db.host,
-  user: config.db.user,
-  password: config.db.password,
-  database: config.db.database,
-});
 
 tean.addBaseTypes();
 
@@ -43,9 +35,9 @@ app.use("/public", express.static(`${__dirname}/public`));
 
 app.use(bodyParser.json({type: "*/*"}));
 
-require("./routes/callings.js").add(app, stakeyDb);
-require("./routes/calling.js").add(app, stakeyDb);
-require("./routes/approval.js").add(app, stakeyDb);
+require("./routes/approval.js").add(app);
+require("./routes/callings.js").add(app);
+require("./routes/calling.js").add(app);
 
 app.use((req, res, next) => {
   res.render("missing.pug");

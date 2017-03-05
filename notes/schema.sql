@@ -3,6 +3,7 @@ CREATE TABLE `users` (
   `firstName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `lastName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `email` varchar(45) COLLATE utf8_bin DEFAULT NULL,
+  `level` tinyint(3) unsigned NOT NULL DEFAULT '0', -- 0 high council, 1 stake presidency, 2 admin
   `passwordHash` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `salt` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -31,20 +32,11 @@ CREATE TABLE `approvals` (
   `callingId` int(10) unsigned NOT NULL,
   `approverId` int(10) unsigned NOT NULL,
   `approved` tinyint(3) unsigned DEFAULT NULL,
+  `linkCode` varchar(16) COLLATE utf8_bin NOT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `approverId_idx` (`approverId`),
   KEY `callingId_idx` (`callingId`),
   CONSTRAINT `approvalsApproverId` FOREIGN KEY (`approverId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `approvalsCallingId` FOREIGN KEY (`callingId`) REFERENCES `callings` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
-
-CREATE TABLE `approvalLinks` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `callingId` int(10) unsigned NOT NULL,
-  `hash` varchar(45) COLLATE utf8_bin DEFAULT NULL,
-  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `callingId_idx` (`callingId`),
-  CONSTRAINT `approvalLinksCallingId` FOREIGN KEY (`callingId`) REFERENCES `callings` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin

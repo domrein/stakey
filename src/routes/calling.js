@@ -2,7 +2,10 @@
 
 const tean = require("tean");
 
-exports.add = (app, stakeyDb) => {
+const approval = require("../controllers/approval.js");
+const db = require("../controllers/database.js");
+
+exports.add = app => {
   // create a new calling
   app.get("/calling", (req, res) => {
     // TODO: require auth
@@ -25,10 +28,20 @@ exports.add = (app, stakeyDb) => {
   // view a specific calling
   app.get("/calling/:id", async (req, res, next) => {
     // TODO: require auth
+    let data = null;
     try {
-      const data = await tean.normalize({id: "int"}, req.params);
-      // look up all info for calling and put into read only mode
-      stakeyDb.query(`
+      data = await tean.normalize({id: "int"}, req.params);
+    }
+    catch (err) {
+      console.warn(err);
+      res.status(400).send();
+      return;
+    }
+
+    // look up all info for calling and put into read only mode
+    let rows = null;
+    try {
+      rows = await db.query(`
         SELECT
         id,
         firstName,
@@ -43,43 +56,43 @@ exports.add = (app, stakeyDb) => {
         bishopConsulted,
         councilRepConsulted
         FROM callings WHERE id = ? LIMIT 1
-      `, [data.id], (err, rows) => {
-        if (err) {
-          res.status(500).send();
-        }
-        else if (!rows.length) {
-          next();
-        }
-        else {
-          const calling = rows[0];
-          res.render("calling.pug", {
-            id: calling.id,
-            viewMode: true,
-            firstName: calling.firstName,
-            middleName: calling.middleName,
-            lastName: calling.lastName,
-            position: calling.position,
-            reason: calling.reason,
-            templeWorthy: calling.templeWorthy === 1 ? true : calling.templeWorthy === false ? 0 : null,
-            ward: calling.ward,
-            currentCalling: calling.currentCalling,
-            phoneNumber: calling.phoneNumber,
-            bishopConsulted: !!calling.bishopConsulted,
-            councilRepConsulted: !!calling.councilRepConsulted,
-          });
-        }
-      });
+      `, [data.id]);
     }
     catch (err) {
-      console.log(err);
-      res.status(400).send();
+      console.error(err);
+      res.status(500).send();
+      return;
+    }
+
+    // show 404 if no rows found
+    if (!rows.length) {
+      next();
+    }
+    else {
+      const calling = rows[0];
+      res.render("calling.pug", {
+        id: calling.id,
+        viewMode: true,
+        firstName: calling.firstName,
+        middleName: calling.middleName,
+        lastName: calling.lastName,
+        position: calling.position,
+        reason: calling.reason,
+        templeWorthy: calling.templeWorthy === 1 ? true : calling.templeWorthy === false ? 0 : null,
+        ward: calling.ward,
+        currentCalling: calling.currentCalling,
+        phoneNumber: calling.phoneNumber,
+        bishopConsulted: !!calling.bishopConsulted,
+        councilRepConsulted: !!calling.councilRepConsulted,
+      });
     }
   });
 
   // create a new calling
   app.post("/calling", async (req, res) => {
+    let data = null;
     try {
-      const data = await tean.normalize({
+      data = await tean.normalize({
         firstName: "string(45)",
         middleName: "string(45)",
         lastName: "string(45)",
@@ -92,18 +105,26 @@ exports.add = (app, stakeyDb) => {
         bishopConsulted: "bool",
         councilRepConsulted: "bool",
       }, req.body);
+    }
+    catch (err) {
+      console.warn(err);
+      res.status(400).send();
+      return;
+    }
 
-      // massage data for database
-      if (data.templeWorthy === false) {
-        data.templeWorthy = 0;
-      }
-      else if (data.templeWorthy === true) {
-        data.templeWorthy = 1;
-      }
-      data.bishopConsulted = data.bishopConsulted ? 1 : 0;
-      data.councilRepConsulted = data.councilRepConsulted ? 1 : 0;
+    // massage data for database
+    if (data.templeWorthy === false) {
+      data.templeWorthy = 0;
+    }
+    else if (data.templeWorthy === true) {
+      data.templeWorthy = 1;
+    }
+    data.bishopConsulted = data.bishopConsulted ? 1 : 0;
+    data.councilRepConsulted = data.councilRepConsulted ? 1 : 0;
 
-      stakeyDb.query(`
+    let result = null;
+    try {
+      result = await db.query(`
         INSERT INTO callings (
           firstName,
           middleName,
@@ -129,45 +150,52 @@ exports.add = (app, stakeyDb) => {
         data.phoneNumber,
         data.bishopConsulted,
         data.councilRepConsulted,
-      ], err => {
-        if (err) {
-          console.log(err);
-          res.status(500).send();
-        }
-        else {
-          res.send();
-        }
-      });
+      ]);
     }
     catch (err) {
-      console.log(err);
-      console.log(err.join());
-      res.status(400).send();
+      console.error(err);
+      res.status(500).send();
+      return;
     }
+
+    // send reply
+    const callingId = result.insertId;
+    try {
+      await approval.generateApprovals(callingId);
+    }
+    catch (err) {
+      console.error(err);
+      console.error(`Unable to send emails for new calling ${callingId}`);
+      res.status(500).send();
+      return;
+    }
+
+    res.status(200).send();
   });
 
   // delete a calling
   app.delete("/calling/:id", async (req, res) => {
     // TODO: only admins should be able to delete a calling
+    let data = null;
     try {
-      const data = await tean.normalize({id: "int"}, req.params);
-      res.status(200).send();
-
-      stakeyDb.query(`
-        DELETE FROM callings WHERE id = ?
-      `, [data.id], (err, result) => {
-        if (err) {
-          res.status(500).send();
-        }
-        else {
-          res.status(200).send();
-        }
-      });
+      data = await tean.normalize({id: "int"}, req.params);
     }
     catch (err) {
-      console.log(err);
-      console.log(err.join());
+      console.warn(err);
       res.status(400).send();
+      return;
     }
+
+    try {
+      await db.query(`
+        DELETE FROM callings WHERE id = ?
+      `, [data.id]);
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).send();
+    }
+
+    res.status(200).send();
   });
 };
