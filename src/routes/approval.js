@@ -3,9 +3,11 @@
 const tean = require("tean");
 
 const db = require("../controllers/database.js");
+const security = require("../controllers/security.js");
 
 exports.add = app => {
-  app.get("/approval/:linkCode", async (req, res, next) => {
+  app.get("/approval/:linkCode", security.authorize(security.UNAUTHORIZED),
+    async (req, res, next) => {
     // approved, newApproved, candidate, calling
     let data = null;
     try {

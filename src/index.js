@@ -3,8 +3,12 @@
 const config = require("../config.json");
 
 const express = require("express");
+// const session = require("express-session");
+
 const bodyParser = require("body-parser");
 const tean = require("tean");
+
+const security = require("./controllers/security.js");
 
 tean.addBaseTypes();
 
@@ -23,21 +27,27 @@ app.use("/public", express.static(`${__dirname}/public`));
 // })); // BUG: This secret generation will break if we have multiple processes
 
 // make sure session data is initialized
-// app.use((req, res, next) => {
-//   if (!req.session.userData) {
-//     req.session.userData = {authLevel: validate.authLevels.GUEST};
-//   }
-//   if (!req.session.userData.hasOwnProperty("username")) {
-//     req.session.userData.username = "";
-//   }
-//   next();
-// });
+app.use((req, res, next) => {
+  // TEMP:
+  if (!req.session) {
+    req.session = {};
+  }
+
+  if (!req.session.hasOwnProperty("authLevel")) {
+    req.session.authLevel = security.UNAUTHORIZED;
+  }
+  if (!req.session.hasOwnProperty("username")) {
+    req.session.username = "Guest";
+  }
+  next();
+});
 
 app.use(bodyParser.json({type: "*/*"}));
 
 require("./routes/approval.js").add(app);
 require("./routes/callings.js").add(app);
 require("./routes/calling.js").add(app);
+require("./routes/login.js").add(app);
 
 app.use((req, res, next) => {
   res.render("missing.pug");

@@ -1,0 +1,33 @@
+extends page.pug
+
+append head
+  script(src="md5.js")
+  script.
+    const onLogin = () => {
+      console.log(md5(document.getElementById("passwordInput").value));
+      const oReq = new XMLHttpRequest();
+      oReq.addEventListener("load", function() {
+        // console.log(this.responseText);
+        // TODO: sometimes we'll want to redirect to another url
+        //         this will happen if the user clicks a link they aren't currently authorized for
+        //         and the user is redirected to the login page
+        window.location = "/callings";
+      });
+      oReq.open("POST", "http://localhost:3000/login");
+      oReq.send(JSON.stringify({
+        email: document.getElementById("emailInput").value,
+        password: document.getElementById("passwordInput").value,
+      }));
+    };
+
+append content
+  div(style="display: flex; flex-direction: row; justify-content: space-between;")
+  h3 Taylorsville Utah North Stake
+
+  h1 Login
+  .box.vertical-items
+    div Email:
+    input#emailInput(type="text" value="" style="width: 220px;")
+    div Password:
+    input#passwordInput(type="password" value="" style="width: 220px;")
+    button(onclick="onLogin()" style="margin-top: 10px; width: 100px;") Login

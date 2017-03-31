@@ -3,11 +3,11 @@
 const tean = require("tean");
 
 const db = require("../controllers/database.js");
+const security = require("../controllers/security.js");
 
 exports.add = app => {
   // view all callings
-  app.get("/callings", async (req, res) => {
-    // TODO: require auth
+  app.get("/callings", security.authorize(security.HIGH_COUNCIL), async (req, res) => {
     let rows = null;
     try {
       // pull all the stuff from the database

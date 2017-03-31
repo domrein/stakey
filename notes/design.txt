@@ -1,4 +1,8 @@
 STEPS:
+calling created by stake presidency
+emails sent to high council
+  members can click links to approve/deny
+email sent when all approvals received
 submit calling (who does this?)
 stake presidency approves calling (how many approvals needed?)
   (approve/deny)

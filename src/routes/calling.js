@@ -4,11 +4,11 @@ const tean = require("tean");
 
 const approval = require("../controllers/approval.js");
 const db = require("../controllers/database.js");
+const security = require("../controllers/security.js");
 
 exports.add = app => {
   // create a new calling
-  app.get("/calling", (req, res) => {
-    // TODO: require auth
+  app.get("/calling", security.authorize(security.STAKE_PRESIDENCY), (req, res) => {
     res.render("calling.pug", {
       // TEST DATA
       // firstName: "Paul",
@@ -26,8 +26,7 @@ exports.add = app => {
   });
 
   // view a specific calling
-  app.get("/calling/:id", async (req, res, next) => {
-    // TODO: require auth
+  app.get("/calling/:id", security.authorize(security.HIGH_COUNCIL), async (req, res, next) => {
     let data = null;
     try {
       data = await tean.normalize({id: "int"}, req.params);
@@ -89,7 +88,7 @@ exports.add = app => {
   });
 
   // create a new calling
-  app.post("/calling", async (req, res) => {
+  app.post("/calling", security.authorize(security.STAKE_PRESIDENCY), async (req, res) => {
     let data = null;
     try {
       data = await tean.normalize({
@@ -174,7 +173,7 @@ exports.add = app => {
   });
 
   // delete a calling
-  app.delete("/calling/:id", async (req, res) => {
+  app.delete("/calling/:id", security.authorize(security.STAKE_PRESIDENCY), async (req, res) => {
     // TODO: only admins should be able to delete a calling
     let data = null;
     try {

@@ -3,7 +3,7 @@ CREATE TABLE `users` (
   `firstName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `lastName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `email` varchar(45) COLLATE utf8_bin DEFAULT NULL,
-  `level` tinyint(3) unsigned NOT NULL DEFAULT '0', -- 0 high council, 1 stake presidency, 2 admin
+  `level` tinyint(3) unsigned NOT NULL DEFAULT '0', -- 0 unauthorized, 1 high council, 2 stake presidency, 3 admin
   `passwordHash` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `salt` varchar(255) COLLATE utf8_bin DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
