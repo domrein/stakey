@@ -1,0 +1,4 @@
+- login flow
+- register flow
+- send emails
+- support phone layout (add media queries)
