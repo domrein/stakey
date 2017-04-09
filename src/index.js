@@ -45,9 +45,10 @@ app.use((req, res, next) => {
 app.use(bodyParser.json({type: "*/*"}));
 
 require("./routes/approval.js").add(app);
-require("./routes/callings.js").add(app);
 require("./routes/calling.js").add(app);
+require("./routes/callings.js").add(app);
 require("./routes/login.js").add(app);
+require("./routes/register.js").add(app);
 
 app.use((req, res, next) => {
   res.render("missing.pug");

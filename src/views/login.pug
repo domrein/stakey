@@ -1,7 +1,7 @@
 extends page.pug
 
 append head
-  script(src="md5.js")
+  script(src="public/md5.js")
   script.
     const onLogin = () => {
       console.log(md5(document.getElementById("passwordInput").value));
@@ -9,14 +9,14 @@ append head
       oReq.addEventListener("load", function() {
         // console.log(this.responseText);
         // TODO: sometimes we'll want to redirect to another url
-        //         this will happen if the user clicks a link they aren't currently authorized for
-        //         and the user is redirected to the login page
+        //   this will happen if the user clicks a link they aren't currently authorized for
+        //   and the user is redirected to the login page
         window.location = "/callings";
       });
       oReq.open("POST", "http://localhost:3000/login");
       oReq.send(JSON.stringify({
         email: document.getElementById("emailInput").value,
-        password: document.getElementById("passwordInput").value,
+        password: md5(`${document.getElementById("passwordInput").value}`),
       }));
     };
 

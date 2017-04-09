@@ -1,0 +1,17 @@
+extends page.pug
+
+append head
+  if valid
+    script.
+      setTimeout(() => {
+        window.location = "/callings";
+      }, 5000);
+
+append content
+  div(style="display: flex; flex-direction: row; justify-content: space-between;")
+  h3 Taylorsville Utah North Stake
+  
+  if valid
+    p You have successfully registered. You will be redirected in 5 seconds.
+  else
+    p This registration code is not valid. Please contact the administrator for a new code.

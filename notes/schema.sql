@@ -3,9 +3,9 @@ CREATE TABLE `users` (
   `firstName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `lastName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `email` varchar(45) COLLATE utf8_bin DEFAULT NULL,
-  `level` tinyint(3) unsigned NOT NULL DEFAULT '0', -- 0 unauthorized, 1 high council, 2 stake presidency, 3 admin
-  `passwordHash` varchar(255) COLLATE utf8_bin DEFAULT NULL,
-  `salt` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `level` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `passwordHash` varchar(128) COLLATE utf8_bin DEFAULT NULL,
+  `salt` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
@@ -39,4 +39,12 @@ CREATE TABLE `approvals` (
   KEY `callingId_idx` (`callingId`),
   CONSTRAINT `approvalsApproverId` FOREIGN KEY (`approverId`) REFERENCES `users` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `approvalsCallingId` FOREIGN KEY (`callingId`) REFERENCES `callings` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
+
+CREATE TABLE `registration` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `code` varchar(16) COLLATE utf8_bin NOT NULL,
+  `level` tinyint(3) unsigned NOT NULL,
+  `expiration` datetime NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin
