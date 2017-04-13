@@ -1,7 +1,7 @@
 extends page.pug
 
 append head
-  script(src="public/md5.js")
+  script(src="../public/md5.js")
   script.
     const onLogin = () => {
       console.log(md5(document.getElementById("passwordInput").value));

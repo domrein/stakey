@@ -22,10 +22,11 @@ exports.add = app => {
     let rows = null;
     try {
       // TODO: think of a solution to prune expired codes
-      rows = await db.query("SELECT id FROM registration WHERE code = ? AND expiration >= NOW() LIMIT 1", []);
+      rows = await db.query("SELECT id FROM registration WHERE code = ? AND expiration >= NOW() LIMIT 1", [data.code]);
     }
     catch (err) {
       // TODO: add an "oops" page instead of just 500
+      console.error(err);
       res.status(500).send();
       return;
     }
@@ -55,10 +56,11 @@ exports.add = app => {
     let rows = null;
     try {
       // TODO: think of a solution to prune expired codes
-      rows = await db.query("SELECT level FROM registration WHERE code = ? AND expiration >= NOW() LIMIT 1", []);
+      rows = await db.query("SELECT level FROM registration WHERE code = ? AND expiration >= NOW() LIMIT 1", [data.code]);
     }
     catch (err) {
       // TODO: add an "oops" page instead of just 500
+      console.error(err);
       res.status(500).send();
       return;
     }
@@ -86,6 +88,7 @@ exports.add = app => {
       }
       catch (err) {
         // TODO: add an "oops" page instead of just 500
+        console.error(err);
         res.status(500).send();
         return;
       }
@@ -95,16 +98,13 @@ exports.add = app => {
       req.session.email = data.email;
       req.session.firstName = data.firstName;
       req.session.lastName = data.lastName;
-      res.status(200).send();
 
       // delete code
       try {
-        rows = await db.query("DELETE FROM registration WHERE code = ?", []);
+        db.query("DELETE FROM registration WHERE code = ?", [data.code]);
       }
       catch (err) {
-        // TODO: add an "oops" page instead of just 500
-        res.status(500).send();
-        return;
+        console.error(err);
       }
 
       res.status(200).send();

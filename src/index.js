@@ -3,7 +3,7 @@
 const config = require("../config.json");
 
 const express = require("express");
-// const session = require("express-session");
+const session = require("express-session");
 
 const bodyParser = require("body-parser");
 const tean = require("tean");
@@ -22,9 +22,12 @@ app.use("/public", express.static(`${__dirname}/public`));
 // BUG: the default session store is in memory
 //   it does not scale beyound a single process
 //   implement redis sessions https://www.npmjs.com/package/connect-redis
-// app.use(session({
-//   secret: crypto.generateSalt(50),
-// })); // BUG: This secret generation will break if we have multiple processes
+let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+let secret = "";
+while (secret.length < 32) {
+  secret += chars[~~Math.random() * chars.length];
+}
+app.use(session({secret})); // BUG: This secret generation will break if we have multiple processes
 
 // make sure session data is initialized
 app.use((req, res, next) => {

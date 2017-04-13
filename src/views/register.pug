@@ -1,17 +1,54 @@
 extends page.pug
 
 append head
-  if valid
-    script.
-      setTimeout(() => {
-        window.location = "/callings";
-      }, 5000);
+  script(src="../public/md5.js")
+  script.
+    // code: "string(32)",
+    // passwordHash: "string(32)",
+    // email: "email",
+    // firstName: "string(45)",
+    // lastName: "string(45)",
+
+    const onRegister = () => {
+      console.log(md5(document.getElementById("passwordInput").value));
+      const oReq = new XMLHttpRequest();
+      oReq.addEventListener("load", function() {
+        // TODO: let user know they'll be redirected and registration was successful
+        if (this.status === 200) {
+          setTimeout(() => {
+            window.location = "/callings";
+          }, 5000);
+        }
+        // TODO: handle errors (display message to user?)
+      });
+      oReq.open("POST", "http://localhost:3000/register");
+      oReq.send(JSON.stringify({
+        firstName: document.getElementById("firstNameInput").value,
+        lastName: document.getElementById("lastNameInput").value,
+        code: "#{code}",
+        email: document.getElementById("emailInput").value,
+        passwordHash: md5(`${document.getElementById("passwordInput").value}`),
+      }));
+    };
 
 append content
   div(style="display: flex; flex-direction: row; justify-content: space-between;")
   h3 Taylorsville Utah North Stake
   
   if valid
-    p You have successfully registered. You will be redirected in 5 seconds.
+    h1 Register
+    .box.vertical-items
+      div First Name:
+      input#firstNameInput(type="text" value="" style="width: 220px;")
+      div Last Name:
+      input#lastNameInput(type="text" value="" style="width: 220px;")
+      div Email:
+      input#emailInput(type="email" value="" style="width: 220px;")
+      //- TODO: check if both passwords match
+      div Password:
+      input#passwordInput(type="password" value="" style="width: 220px;")
+      div Confirm Password:
+      input#passwordInput2(type="password" value="" style="width: 220px;")
+      button(onclick="onRegister()" style="margin-top: 10px; width: 100px;") Register
   else
     p This registration code is not valid. Please contact the administrator for a new code.
