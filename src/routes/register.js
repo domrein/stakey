@@ -70,7 +70,7 @@ exports.add = app => {
       let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
       let salt = "";
       while (salt.length < 32) {
-        salt += chars[~~Math.random() * chars.length];
+        salt += chars[~~(Math.random() * chars.length)];
       }
       // create hash from password + salt
 
