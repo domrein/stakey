@@ -56,6 +56,8 @@ exports.add = app => {
       }
     }
 
+    // TODO: move calling into ready for approval if all council members have approved/denied
+
     res.render("approval.pug", {
       username: security.getUsername(req),
       approved: approval.approved,
