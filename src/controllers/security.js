@@ -21,4 +21,8 @@ module.exports = {
       }
     };
   },
+
+  getUsername(req) {
+    return `${req.session.firstName} ${req.session.lastName}`;
+  },
 };

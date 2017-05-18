@@ -6,8 +6,7 @@ const db = require("../controllers/database.js");
 const security = require("../controllers/security.js");
 
 exports.add = app => {
-  app.get("/approval/:linkCode", security.authorize(security.UNAUTHORIZED),
-    async (req, res, next) => {
+  app.get("/approval/:linkCode", security.authorize(security.UNAUTHORIZED), async (req, res, next) => {
     // approved, newApproved, candidate, calling
     let data = null;
     try {
@@ -58,6 +57,7 @@ exports.add = app => {
     }
 
     res.render("approval.pug", {
+      username: security.getUsername(req),
       approved: approval.approved,
       newApproved: data.approved === null ? data.approved : data.approved === true ? 1 : 0,
       candidate: `${approval.firstName} ${approval.middleName} ${approval.lastName}`,
