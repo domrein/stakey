@@ -40,6 +40,7 @@ exports.add = app => {
     // display in table
     res.render("callings.pug", {
       username: security.getUsername(req),
+      canCreate: req.session.authLevel >= security.STAKE_PRESIDENCY,
       pendingCallings: rows.filter(r => r.state === 0),
       readyCallings: rows.filter(r => r.state === 1),
     });
