@@ -10,6 +10,7 @@ exports.add = app => {
   app.get("/", security.authorize(security.HIGH_COUNCIL), async (req, res) => {
     res.render("home.pug", {
       canCreate: security.canCreateCalling(req),
-      canRegister: security.canCreateRegistrationLink(req)});
+      canRegister: security.canCreateRegistrationLink(req),
+    });
   });
 }
