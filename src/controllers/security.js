@@ -26,4 +26,16 @@ module.exports = {
   getUsername(req) {
     return `${req.session.firstName} ${req.session.lastName}`;
   },
+
+  canCreateCalling(req) {
+    return req.authLevel >= this.STAKE_PRESIDENCY;
+  },
+
+  canDeleteCalling(req) {
+    return req.authLevel >= this.STAKE_PRESIDENCY;
+  },
+
+  canCreateRegistrationLink(req) {
+    return req.authLevel >= this.STAKE_PRESIDENCY;
+  },
 };

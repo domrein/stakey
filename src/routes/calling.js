@@ -72,6 +72,7 @@ exports.add = app => {
       res.render("calling.pug", {
         id: calling.id,
         viewMode: true,
+        canDelete: security.canDeleteCalling(req),
         firstName: calling.firstName,
         middleName: calling.middleName,
         lastName: calling.lastName,
