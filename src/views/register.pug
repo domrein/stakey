@@ -13,13 +13,12 @@ append head
       console.log(md5(document.getElementById("passwordInput").value));
       const oReq = new XMLHttpRequest();
       oReq.addEventListener("load", function() {
-        // TODO: let user know they'll be redirected and registration was successful
         if (this.status === 200) {
-          setTimeout(() => {
-            window.location = "/callings";
-          }, 5000);
+          window.location = "/callings";
         }
-        // TODO: handle errors (display message to user?)
+        else {
+          alert(`Unable to register: ${this.status} ${this.responseText}`);
+        }
       });
       oReq.open("POST", "http://localhost:3000/register");
       oReq.send(JSON.stringify({

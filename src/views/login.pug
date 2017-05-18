@@ -7,11 +7,18 @@ append head
       console.log(md5(document.getElementById("passwordInput").value));
       const oReq = new XMLHttpRequest();
       oReq.addEventListener("load", function() {
-        // console.log(this.responseText);
+        if (this.status === 401) {
+          alert("invalid login");
+        }
+        else if (this.status === 200) {
+          window.location = "/callings";
+        }
+        else {
+          alert(`Unable to log in: ${this.status} ${this.responseText}`);
+        }
         // TODO: sometimes we'll want to redirect to another url
         //   this will happen if the user clicks a link they aren't currently authorized for
         //   and the user is redirected to the login page
-        window.location = "/callings";
       });
       oReq.open("POST", "http://localhost:3000/login");
       oReq.send(JSON.stringify({
