@@ -1,12 +1,13 @@
 "use strict";
 
 const db = require("./database.js");
+const security = require("./security");
 
 exports.generateApprovals = async callingId => {
   let users = null;
   try {
     // pull all high council users
-    users = await db.query("SELECT id, email FROM users WHERE level = 0");
+    users = await db.query("SELECT id, email FROM users WHERE level = ?", [security.HIGH_COUNCIL]);
   }
   catch (err) {
     console.error(err);
