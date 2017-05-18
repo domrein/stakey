@@ -58,5 +58,6 @@ html
         }
   body
     #content
-      div Hi #{username}
+      if username
+        div Hi #{username}
       block content
