@@ -10,10 +10,11 @@ module.exports = {
     return (req, res, next) => {
       if (req.session.authLevel < level) {
         if (!req.session.authLevel) {
-          res.status(401).send();
+          // TODO: save off link they wanted to navigate to, then redirect there on successful login (if link wasn't login)
+          res.status(401).render("login.pug");
         }
         else {
-          res.status(403).send();
+          res.status(403).render("forbidden.pug");
         }
       }
       else {
