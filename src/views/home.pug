@@ -1,0 +1,9 @@
+extends page.pug
+
+append content
+  h3 Taylorsville Utah North Stake
+  if canCreate
+    a(href="/calling") Create a Calling
+  a(href="/callings") View All Callings
+  if canRegister
+    a(href="/registration") Create a Registration Link

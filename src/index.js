@@ -50,6 +50,7 @@ app.use(bodyParser.json({type: "*/*"}));
 require("./routes/approval.js").add(app);
 require("./routes/calling.js").add(app);
 require("./routes/callings.js").add(app);
+require("./routes/home.js").add(app);
 require("./routes/login.js").add(app);
 require("./routes/register.js").add(app);
 

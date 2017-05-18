@@ -58,6 +58,8 @@ html
         }
   body
     #content
-      if username
-        div Hi #{username}
+      div
+        a(href="/") Home
+        if username
+          span - Hi #{username}
       block content
