@@ -33,6 +33,7 @@ exports.generateApprovals = async callingId => {
     `, [emails.map(e => [callingId, e.id, e.code])]);
 
     // TODO: send out emails
+    console.log(emails.map(e => `user: ${e.email} code: ${e.code}`));
   }
   catch (err) {
     console.error(err);
