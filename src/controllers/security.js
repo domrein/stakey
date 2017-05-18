@@ -28,14 +28,14 @@ module.exports = {
   },
 
   canCreateCalling(req) {
-    return req.authLevel >= this.STAKE_PRESIDENCY;
+    return req.session.authLevel >= this.STAKE_PRESIDENCY;
   },
 
   canDeleteCalling(req) {
-    return req.authLevel >= this.STAKE_PRESIDENCY;
+    return req.session.authLevel >= this.STAKE_PRESIDENCY;
   },
 
   canCreateRegistrationLink(req) {
-    return req.authLevel >= this.STAKE_PRESIDENCY;
+    return req.session.authLevel >= this.STAKE_PRESIDENCY;
   },
 };
