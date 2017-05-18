@@ -24,6 +24,9 @@ module.exports = {
   },
 
   getUsername(req) {
+    if (!req.session.firstName && !req.session.lastName) {
+      return "";
+    }
     return `${req.session.firstName} ${req.session.lastName}`;
   },
 
