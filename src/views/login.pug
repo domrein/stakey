@@ -16,7 +16,7 @@ append head
       oReq.open("POST", "http://localhost:3000/login");
       oReq.send(JSON.stringify({
         email: document.getElementById("emailInput").value,
-        password: md5(`${document.getElementById("passwordInput").value}`),
+        passwordHash: md5(`${document.getElementById("passwordInput").value}`),
       }));
     };
 
