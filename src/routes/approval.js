@@ -44,7 +44,7 @@ exports.add = app => {
 
     approval = approval[0];
 
-    if (data.approved !== null) {
+    if (data.approved !== null && approval.approved === null) {
       try {
         console.log([data.approved ? 1 : 0, approval.id]);
         await db.query("UPDATE approvals SET approved = ? WHERE id = ? LIMIT 1", [data.approved ? 1 : 0, approval.id]);
