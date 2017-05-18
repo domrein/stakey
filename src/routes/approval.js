@@ -23,7 +23,7 @@ exports.add = app => {
     let approval = null;
     try {
       approval = await db.query(`
-        SELECT c.firstName, c.middleName, c.lastName, c.position, a.approved, a.id
+        SELECT a.callingId, c.firstName, c.middleName, c.lastName, c.position, a.approved, a.id
         FROM approvals a
         INNER JOIN callings c ON a.callingId = c.id
         WHERE a.linkCode = ?
@@ -56,7 +56,19 @@ exports.add = app => {
       }
     }
 
-    // TODO: move calling into ready for approval if all council members have approved/denied
+    // move calling into ready for approval if all council members have approved/denied
+    try {
+      const result = db.query(`
+        SELECT COUNT(*) AS total FROM approvals WHERE callingId = ? AND approved IS NULL
+      `, [approval.callingId]);
+      if (!result.total) {
+        await db.query("UPDATE callings SET state = 1 WHERE id = ?", [approval.callingId]);
+      }
+    }
+    catch (err) {
+      console.error(`Error attempting to move calling to ready queue ${err}`);
+    }
+
 
     res.render("approval.pug", {
       username: security.getUsername(req),
