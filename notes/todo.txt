@@ -1,4 +1,4 @@
-X login flow
+x login flow
 - register flow
 - send emails
   - send to presidency on creation (not to creator)
@@ -17,5 +17,5 @@ x update columns
   x High Council Approvals => Approvals
   x High Council Denials => Additional Discussion
 - add assignment flow (in to be interviewed)
-- add history (list of completed assignment)
+x add history (list of completed assignment)
 - allow others (non stake callings) to create callings
