@@ -2,9 +2,10 @@
 
 module.exports = {
   UNAUTHORIZED: 0,
-  HIGH_COUNCIL: 1,
-  STAKE_PRESIDENCY: 2,
-  ADMIN: 3,
+  USER: 1,
+  HIGH_COUNCIL: 2,
+  STAKE_PRESIDENCY: 3,
+  ADMIN: 4,
 
   authorize(level) {
     return (req, res, next) => {
