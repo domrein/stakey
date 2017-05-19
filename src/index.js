@@ -33,15 +33,20 @@ app.use(session({secret})); // BUG: This secret generation will break if we have
 app.use((req, res, next) => {
   // TEMP:
   if (!req.session) {
-    req.session = {};
+    req.session = {
+      authLevel: security.UNAUTHORIZED,
+      firstName: "Guest",
+      lastName: "User",
+    };
   }
 
-  if (!req.session.hasOwnProperty("authLevel")) {
-    req.session.authLevel = security.UNAUTHORIZED;
+  // skip auth on dev
+  if (process.env.NODE_ENV === "dev") {
+    req.session.authLevel = security.ADMIN;
+    req.session.firstName = "DEVELOPER";
+    req.session.lastName = "MODE";
   }
-  if (!req.session.hasOwnProperty("username")) {
-    req.session.username = "Guest";
-  }
+
   next();
 });
 
@@ -50,6 +55,7 @@ app.use(bodyParser.json({type: "*/*"}));
 require("./routes/approval.js").add(app);
 require("./routes/calling.js").add(app);
 require("./routes/callings.js").add(app);
+require("./routes/history.js").add(app);
 require("./routes/home.js").add(app);
 require("./routes/login.js").add(app);
 require("./routes/register.js").add(app);
