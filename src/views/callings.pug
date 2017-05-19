@@ -34,34 +34,20 @@ append content
       input(type="text")
   h3 Taylorsville Utah North Stake
 
-  h1 Calling Statuses
-  h2 Pending Callings
-  table(style="width: 100%; text-align: center;")
-    tr
-      th Candidate
-      th Position
-      th High Council Approvals
-      th High Council Denials
-      th Total
-    each approval in pendingCallings
-      tr(onclick=`window.location = "/calling/${approval.id}"` style="cursor: pointer;")
-        td #{approval.firstName} #{approval.lastName}
-        td #{approval.position}
-        td #{approval.approvalCount}
-        td #{approval.denialCount}
-        td #{approval.approvalCount + approval.denialCount}
-  h2 Ready for Interview
-  table(style="width: 100%; text-align: center;")
-    tr
-      th Candidate
-      th Position
-      th High Council Approvals
-      th High Council Denials
-      th Total
-    each approval in readyCallings
+  h1 Callings
+  each table in tables
+    h2 #{table.name}
+    table(style="width: 100%; text-align: center;")
       tr
-        td #{approval.firstName} #{approval.lastName}
-        td #{approval.position}
-        td #{approval.approvalCount}
-        td #{approval.denialCount}
-        td #{approval.approvalCount + approval.denialCount}
+        th Candidate
+        th Position
+        th Approvals
+        th Additional Discussion
+        th Total
+      each approval in table.callings
+        tr(onclick=`window.location = "/calling/${approval.id}"` style="cursor: pointer;")
+          td #{approval.firstName} #{approval.lastName}
+          td #{approval.position}
+          td #{approval.approvalCount}
+          td #{approval.denialCount}
+          td #{approval.approvalCount + approval.denialCount}

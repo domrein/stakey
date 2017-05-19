@@ -41,8 +41,22 @@ exports.add = app => {
     res.render("callings.pug", {
       username: security.getUsername(req),
       canCreate: security.canCreateCalling(req),
-      pendingCallings: rows.filter(r => r.state === 0),
-      readyCallings: rows.filter(r => r.state === 1),
+      tables: [{
+        name: "Pending Presidency Approval",
+        callings: rows.filter(r => r.state === 0),
+      }, {
+        name: "Pending High Council Approval",
+        callings: rows.filter(r => r.state === 1),
+      }, {
+        name: "To Be Interviewed",
+        callings: rows.filter(r => r.state === 2),
+      }, {
+        name: "To Be Sustained",
+        callings: rows.filter(r => r.state === 3),
+      }, {
+        name: "To Be Set Apart",
+        callings: rows.filter(r => r.state === 4),
+      }],
     });
   });
 }
