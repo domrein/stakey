@@ -1,4 +1,21 @@
-- login flow
+X login flow
 - register flow
 - send emails
+  - send to presidency on creation (not to creator)
+  - send to high council after stake presidency approval completed
+  - send to assignee on assignment
 - support phone layout (add media queries)
+- first goes to stake presidency, then high council
+- add checkbox for stake presidency to skip stake presidency approval (already discussed)
+- update pending tables to
+  - Pending Presidency Approval
+  - Pending High Council Approval
+  - To Be Interviewed
+  - To Be Sustained
+  - To Be Apart
+- update columns
+  - High Council Approvals => Approvals
+  - High Council Denials => Additional Discussion
+- add assignment flow (in to be interviewed)
+- add history (list of completed assignment)
+- allow others (non stake callings) to create callings

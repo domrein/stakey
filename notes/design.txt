@@ -26,3 +26,30 @@ admin
     who can create callings
     who is on the stake presidency
     who is on stake high council
+
+click in ready for interview
+  dropdown for members of stake presidency/high council combined, ASSIGN button
+    that will generate email to selected person
+      has link to mark completed
+      moves to "To Be Sustained"
+
+      repeat process for "To Be Set Apart"
+
+      note: whenever stake president is assigned something, CC emails to Harold
+
+
+To Be Interviewed
+To Be Sustained
+To Be Set Apart
+  completed
+
+Home menu has Completed Callings
+  this is just a list of everything
+
+  Do you want to approve Joe Billy Bob for Stake Cookie Tester
+
+  TO APPROVE
+  http://stakey.com/approval/w65xepz0zkg9mfrp?approved=true
+
+  TO DISCUSS
+  http://stakey.com/approval/w65xepz0zkg9mfrp?approved=false
