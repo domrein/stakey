@@ -1,0 +1,28 @@
+extends page.pug
+
+append head
+  style.
+    tbody tr:nth-child(even) {
+      background-color: rgba(200, 200, 200, 0.5);
+    }
+    th {
+      width: 25%;
+    }
+
+    table {
+      border-collapse: collapse
+    }
+
+append content
+  div(style="display: flex; flex-direction: row; justify-content: space-between;")
+  h3 Taylorsville Utah North Stake
+
+  h1 History
+  table(style="width: 100%; text-align: center;")
+    tr
+      th Candidate
+      th Position
+    each calling in callings
+      tr
+        td #{approval.firstName} #{approval.lastName}
+        td #{approval.position}
