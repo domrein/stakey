@@ -7,7 +7,7 @@ const db = require("../controllers/database.js");
 const security = require("../controllers/security.js");
 
 exports.add = app => {
-  app.get("/", security.authorize(security.HIGH_COUNCIL), async (req, res) => {
+  app.get("/", security.authorize(security.USER), async (req, res) => {
     res.render("home.pug", {
       canCreate: security.canCreateCalling(req),
       canRegister: security.canCreateRegistrationLink(req),

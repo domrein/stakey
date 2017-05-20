@@ -32,7 +32,7 @@ module.exports = {
   },
 
   canCreateCalling(req) {
-    return req.session.authLevel >= this.STAKE_PRESIDENCY;
+    return req.session.authLevel >= this.USER;
   },
 
   canDeleteCalling(req) {

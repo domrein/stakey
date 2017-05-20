@@ -8,7 +8,7 @@ const security = require("../controllers/security.js");
 
 exports.add = app => {
   // create a new calling
-  app.get("/calling", security.authorize(security.STAKE_PRESIDENCY), (req, res) => {
+  app.get("/calling", security.authorize(security.USER), (req, res) => {
     res.render("calling.pug", {
       // TEST DATA
       // firstName: "Paul",
@@ -26,7 +26,7 @@ exports.add = app => {
   });
 
   // view a specific calling
-  app.get("/calling/:id", security.authorize(security.HIGH_COUNCIL), async (req, res, next) => {
+  app.get("/calling/:id", security.authorize(security.USER), async (req, res, next) => {
     let data = null;
     try {
       data = await tean.normalize({id: "int"}, req.params);
@@ -89,7 +89,7 @@ exports.add = app => {
   });
 
   // create a new calling
-  app.post("/calling", security.authorize(security.STAKE_PRESIDENCY), async (req, res) => {
+  app.post("/calling", security.authorize(security.USER), async (req, res) => {
     let data = null;
     try {
       data = await tean.normalize({

@@ -7,7 +7,7 @@ const security = require("../controllers/security.js");
 
 exports.add = app => {
   // view all callings
-  app.get("/callings", security.authorize(security.HIGH_COUNCIL), async (req, res) => {
+  app.get("/callings", security.authorize(security.USER), async (req, res) => {
     let rows = null;
     try {
       // pull all the stuff from the database
