@@ -31,17 +31,14 @@ app.use(session({secret})); // BUG: This secret generation will break if we have
 
 // make sure session data is initialized
 app.use((req, res, next) => {
-  // TEMP:
-  if (!req.session) {
-    req.session = {
-      authLevel: security.UNAUTHORIZED,
-      firstName: "Guest",
-      lastName: "User",
-    };
-  }
 
   // skip auth on dev
   if (process.env.NODE_ENV === "dev") {
+  // populate defaults
+  req.session = req.session || {};
+  req.session.authLevel = req.session.authLevel || security.UNAUTHORIZED;
+  req.session.firstName = req.session.firstName || "Guest";
+  req.session.lastName = req.session.lastName || "User";
     req.session.authLevel = security.ADMIN;
     req.session.firstName = "DEVELOPER";
     req.session.lastName = "MODE";
