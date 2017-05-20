@@ -31,14 +31,16 @@ app.use(session({secret})); // BUG: This secret generation will break if we have
 
 // make sure session data is initialized
 app.use((req, res, next) => {
-
-  // skip auth on dev
-  if (process.env.NODE_ENV === "dev") {
   // populate defaults
   req.session = req.session || {};
   req.session.authLevel = req.session.authLevel || security.UNAUTHORIZED;
   req.session.firstName = req.session.firstName || "Guest";
   req.session.lastName = req.session.lastName || "User";
+
+  // no security mode
+  if (process.env.NODE_ENV === "dev" && process.argv[2] === "nosecurity") {
+    // TODO: find out why this is logging twice for every route
+    console.log("APPLICATION IS UNSECURED");
     req.session.authLevel = security.ADMIN;
     req.session.firstName = "DEVELOPER";
     req.session.lastName = "MODE";

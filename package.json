@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node src/index.js",
-    "dev": "NODE_ENV=dev nodemon --inspect -e js,json src/index.js --exec 'node'"
+    "dev": "NODE_ENV=dev nodemon --inspect -e js,json src/index.js nosecurity --exec 'node'"
   },
   "keywords": [
     "LDS",
