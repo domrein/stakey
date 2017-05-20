@@ -18,4 +18,4 @@ x update columns
   x High Council Denials => Additional Discussion
 - add assignment flow (in to be interviewed)
 x add history (list of completed assignment)
-- allow others (non stake callings) to create callings
+x allow others (non stake callings) to create callings
