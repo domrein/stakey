@@ -20,7 +20,7 @@ append head
         //   this will happen if the user clicks a link they aren't currently authorized for
         //   and the user is redirected to the login page
       });
-      oReq.open("POST", "http://localhost:3000/login");
+      oReq.open("POST", "/login");
       oReq.send(JSON.stringify({
         email: document.getElementById("emailInput").value,
         passwordHash: md5(`${document.getElementById("passwordInput").value}`),

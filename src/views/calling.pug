@@ -20,7 +20,7 @@ append head
         // console.log(this.responseText);
         window.location = "/callings";
       });
-      oReq.open("POST", "http://localhost:3000/calling");
+      oReq.open("POST", "/calling");
       oReq.send(JSON.stringify({
         firstName: document.getElementById("firstNameInput").value,
         middleName: document.getElementById("middleNameInput").value,
@@ -42,7 +42,7 @@ append head
         // console.log(this.responseText);
         window.location = "/callings";
       });
-      oReq.open("DELETE", "http://localhost:3000/calling/#{id}");
+      oReq.open("DELETE", "/calling/#{id}");
       oReq.send();
     };
 

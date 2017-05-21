@@ -20,7 +20,7 @@ append head
           alert(`Unable to register: ${this.status} ${this.responseText}`);
         }
       });
-      oReq.open("POST", "http://localhost:3000/register");
+      oReq.open("POST", "/register");
       oReq.send(JSON.stringify({
         firstName: document.getElementById("firstNameInput").value,
         lastName: document.getElementById("lastNameInput").value,
