@@ -1,0 +1,33 @@
+extends page.pug
+
+append head
+  script.
+    const onSend = event => {
+      event.preventDefault();
+      const oReq = new XMLHttpRequest();
+      oReq.addEventListener("load", function() {
+        if (this.status === 200) {
+          window.location = "/";
+        }
+        else {
+          alert(`Unable to send registration link: ${this.status} ${this.responseText}`);
+        }
+      });
+      oReq.open("POST", "/registration");
+      oReq.send(JSON.stringify({
+        role: document.getElementById("role").value,
+        email: document.getElementById("email").value,
+      }));
+    };
+
+append content
+  h3 Taylorsville Utah North Stake
+  form
+    label(for="role") Role:
+    select#role
+      option(value="user") User
+      option(value="highCouncil") High Council
+      option(value="stakePresidency") Stake Presidency
+    label(for="email") Email:
+    input#email(type="email")
+    button(type="send" onclick="onSend(event)") Send

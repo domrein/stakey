@@ -1,5 +1,5 @@
 x login flow
-- register flow
+x register flow
 - send emails
   - send to presidency on creation (not to creator)
   - send to high council after stake presidency approval completed

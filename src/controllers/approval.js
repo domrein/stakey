@@ -2,6 +2,7 @@
 
 const db = require("./database.js");
 const security = require("./security");
+const code = require("../utils/code.js");
 
 exports.generateApprovals = async callingId => {
   let users = null;
@@ -16,13 +17,8 @@ exports.generateApprovals = async callingId => {
 
   // generate data for emails
   const emails = [];
-  const chars = "0123456789abcdefghijklmnopqrstuvwxyz";
   for (const user of users) {
-    let code = "";
-    while (code.length < 16) {
-      code += chars[~~(Math.random() * chars.length)];
-    }
-    emails.push({email: user.email, code, id: user.id});
+    emails.push({email: user.email, code: code.generate(16), id: user.id});
   }
 
   try {

@@ -5,6 +5,7 @@ const crypto = require("crypto");
 
 const db = require("../controllers/database.js");
 const security = require("../controllers/security.js");
+const code = require("../utils/code.js");
 
 exports.add = app => {
   app.get("/register/:code", security.authorize(security.UNAUTHORIZED), async (req, res) => {
@@ -66,12 +67,7 @@ exports.add = app => {
     }
 
     if (rows.length) {
-      // generate salt
-      let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-      let salt = "";
-      while (salt.length < 32) {
-        salt += chars[~~(Math.random() * chars.length)];
-      }
+      const salt = code.generate(32);
       // create hash from password + salt
 
       const hash = crypto.createHash("sha512");
