@@ -20,6 +20,7 @@
     "express": "^4.14.1",
     "express-session": "^1.15.2",
     "mysql": "^2.11.1",
+    "nodemailer": "^4.0.1",
     "pug": "^2.0.0-beta11",
     "tean": "^5.0.2"
   },
