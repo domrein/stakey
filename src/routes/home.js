@@ -1,5 +1,7 @@
 "use strict";
 
+const config = require("../../config.json");
+
 const tean = require("tean");
 const crypto = require("crypto");
 
@@ -9,6 +11,7 @@ const security = require("../controllers/security.js");
 exports.add = app => {
   app.get("/", security.authorize(security.USER), async (req, res) => {
     res.render("home.pug", {
+      stake: config.stake.name,
       canCreate: security.canCreateCalling(req),
       canRegister: security.canCreateRegistrationLink(req),
     });

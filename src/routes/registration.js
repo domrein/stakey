@@ -1,14 +1,17 @@
 "use strict";
 
+const config = require("../../config.json");
+
 const tean = require("tean");
 
 const db = require("../controllers/database.js");
 const security = require("../controllers/security.js");
 const code = require("../utils/code.js");
+const email = require("../controllers/email.js");
 
 exports.add = app => {
   app.get("/registration", security.authorize(security.STAKE_PRESIDENCY), async (req, res) => {
-    res.render("registration.pug", {});
+    res.render("registration.pug", {stake: config.stake.name});
   });
 
   app.post("/registration", security.authorize(security.STAKE_PRESIDENCY), async (req, res) => {
@@ -26,6 +29,7 @@ exports.add = app => {
       return;
     }
 
+    let registrationCode = code.generate(16);
     try {
       let level = 0;
       switch (data.role) {
@@ -40,7 +44,7 @@ exports.add = app => {
       await db.query(`
         INSERT INTO registration (code, level, expiration)
         VALUES (?, ?, DATE_ADD(NOW(), INTERVAL 7 DAY))
-      `, [code.generate(16), level]);
+      `, [registrationCode, level]);
     }
     catch (err) {
       // TODO: add an "oops" page instead of just 500
@@ -49,7 +53,17 @@ exports.add = app => {
       return;
     }
 
-    // TODO: send registration email
+    try {
+      email.send(email, "registration@stakey.paulmilham.com", "Please Register Your Account", `
+        Congrats! You're almost ready to start using stakey. Follow this link ${config.host}/register/${registrationCode}
+      `, `
+        <h3>Congrats!</h3>
+        <p>You're almost ready to start using stakey. Following this link<a href="${config.host}/register/${registrationCode}">${config.host}/register/${registrationCode}</a></p>
+      `);
+    }
+    catch (err) {
+      console.error(`Error sending registration email: ${err}`);
+    }
 
     res.status(200).send();
   });

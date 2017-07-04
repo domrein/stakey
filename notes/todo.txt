@@ -19,4 +19,4 @@ x update columns
 - add assignment flow (in to be interviewed)
 x add history (list of completed assignment)
 x allow others (non stake callings) to create callings
-- make stake info data driven (stake name / wards)
+x make stake info data driven (stake name / wards)

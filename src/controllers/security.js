@@ -1,5 +1,7 @@
 "use strict";
 
+const config = require("../../config.json");
+
 module.exports = {
   UNAUTHORIZED: 0,
   USER: 1,
@@ -12,10 +14,10 @@ module.exports = {
       if (req.session.authLevel < level) {
         if (!req.session.authLevel) {
           // TODO: save off link they wanted to navigate to, then redirect there on successful login (if link wasn't login)
-          res.status(401).render("login.pug");
+          res.status(401).render("login.pug", {stake: config.stake.name});
         }
         else {
-          res.status(403).render("forbidden.pug");
+          res.status(403).render("forbidden.pug", {stake: config.stake.name});
         }
       }
       else {
@@ -40,6 +42,12 @@ module.exports = {
   },
 
   canCreateRegistrationLink(req) {
+    return req.session.authLevel >= this.STAKE_PRESIDENCY;
+  },
+
+  canSkipStakeApproval(req) {
+    console.log(req.session.authLevel);
+    console.log(req.session.authLevel >= this.STAKE_PRESIDENCY);
     return req.session.authLevel >= this.STAKE_PRESIDENCY;
   },
 };

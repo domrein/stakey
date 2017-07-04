@@ -61,7 +61,7 @@ require("./routes/register.js").add(app);
 require("./routes/registration.js").add(app);
 
 app.use((req, res, next) => {
-  res.render("missing.pug");
+  res.render("missing.pug", {stake: config.stake.name});
 })
 
 app.listen(config.port);

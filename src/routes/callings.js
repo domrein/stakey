@@ -1,5 +1,7 @@
 "use strict";
 
+const config = require("../../config.json");
+
 const tean = require("tean");
 
 const db = require("../controllers/database.js");
@@ -21,41 +23,53 @@ exports.add = app => {
           (
     		    SELECT COUNT(id)
             FROM approvals a
-            WHERE a.callingId = c.id AND a.approved = 1
+            WHERE a.callingId = c.id AND a.approved = 1 AND a.state = c.state
         	) AS approvalCount,
           (
       		  SELECT COUNT(id)
             FROM approvals a
-            WHERE a.callingId = c.id AND a.approved = 0
-        	) AS denialCount
+            WHERE a.callingId = c.id AND a.approved = 0 AND a.state = c.state
+        	) AS denialCount,
+          (
+      		  SELECT COUNT(id)
+            FROM approvals a
+            WHERE a.callingId = c.id AND a.approved IS NULL AND a.state = c.state
+        	) AS pendingCount
         FROM callings c
-        WHERE c.state != 2
+        WHERE c.state < 5
       `, []);
     }
     catch (err) {
+      console.error(err);
       res.status(500).send();
       return;
     }
 
     // display in table
     res.render("callings.pug", {
+      stake: config.stake.name,
       username: security.getUsername(req),
       canCreate: security.canCreateCalling(req),
       tables: [{
         name: "Pending Presidency Approval",
         callings: rows.filter(r => r.state === 0),
+        showCounts: true,
       }, {
         name: "Pending High Council Approval",
         callings: rows.filter(r => r.state === 1),
+        showCounts: true,
       }, {
         name: "To Be Interviewed",
         callings: rows.filter(r => r.state === 2),
+        showCounts: false,
       }, {
         name: "To Be Sustained",
         callings: rows.filter(r => r.state === 3),
+        showCounts: false,
       }, {
         name: "To Be Set Apart",
         callings: rows.filter(r => r.state === 4),
+        showCounts: false,
       }],
     });
   });

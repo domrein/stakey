@@ -22,6 +22,26 @@ append head
     .denied {
       background-color:rgba(240, 100, 100, 0.75);
     }
+  script.
+    const advanceCalling = id => {
+      const oReq = new XMLHttpRequest();
+      oReq.addEventListener("load", function() {
+        // console.log(this.responseText);
+        window.location = "/callings";
+      });
+      oReq.open("POST", `/calling/${id}/advance`);
+      oReq.send();
+    };
+
+    const deleteCalling = id => {
+      const oReq = new XMLHttpRequest();
+      oReq.addEventListener("load", function() {
+        // console.log(this.responseText);
+        window.location = "/callings";
+      });
+      oReq.open("DELETE", `/calling/${id}`);
+      oReq.send();
+    };
 
 append content
   div(style="display: flex; flex-direction: row; justify-content: space-between;")
@@ -32,7 +52,7 @@ append content
       div
     #hc HC
       input(type="text")
-  h3 Taylorsville Utah North Stake
+  h3 #{stake}
 
   h1 Callings
   each table in tables
@@ -41,13 +61,23 @@ append content
       tr
         th Candidate
         th Position
-        th Approvals
-        th Additional Discussion
-        th Total
+        if table.showCounts
+          th Approvals
+          th Additional Discussion
+          th Pending
+        th Action
       each approval in table.callings
         tr(onclick=`window.location = "/calling/${approval.id}"` style="cursor: pointer;")
           td #{approval.firstName} #{approval.lastName}
           td #{approval.position}
-          td #{approval.approvalCount}
-          td #{approval.denialCount}
-          td #{approval.approvalCount + approval.denialCount}
+          if (table.showCounts)
+            td #{approval.approvalCount}
+            td #{approval.denialCount}
+            td #{approval.pendingCount}
+          td(style="display: flex;" onclick="event.stopPropagation()")
+            //- TODO: Advance should be assign on interview and above
+            //- This should allow stake presidency to put in an email
+            //- and an email with the assignment + completion link will be sent
+            button(onclick=`advanceCalling(${approval.id})`) Advance
+            span &nbsp;-&nbsp;
+            button(onclick=`deleteCalling(${approval.id})`) Delete

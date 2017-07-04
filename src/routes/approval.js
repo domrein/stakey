@@ -1,5 +1,7 @@
 "use strict";
 
+const config = require("../../config.json");
+
 const tean = require("tean");
 
 const db = require("../controllers/database.js");
@@ -56,21 +58,23 @@ exports.add = app => {
       }
     }
 
-    // move calling into ready for approval if all council members have approved/denied
-    try {
-      const result = db.query(`
-        SELECT COUNT(*) AS total FROM approvals WHERE callingId = ? AND approved IS NULL
-      `, [approval.callingId]);
-      if (!result.total) {
-        await db.query("UPDATE callings SET state = 1 WHERE id = ?", [approval.callingId]);
-      }
-    }
-    catch (err) {
-      console.error(`Error attempting to move calling to ready queue ${err}`);
-    }
-
+    // Callings are manually moved through tiers by stake presidency
+    // // move calling into ready for approval if all council members have approved/denied
+    // try {
+    //   const result = db.query(`
+    //     SELECT COUNT(*) AS total FROM approvals WHERE callingId = ? AND approved IS NULL
+    //   `, [approval.callingId]);
+    //   if (!result.total) {
+    //     await db.query("UPDATE callings SET state = 1 WHERE id = ?", [approval.callingId]);
+    //   }
+    // }
+    // catch (err) {
+    //   console.error(`Error attempting to move calling to ready queue ${err}`);
+    // }
+    // TODO: Email secretary that all approvals have been met and action is needed to move to next phase
 
     res.render("approval.pug", {
+      stake: config.stake.name,
       username: security.getUsername(req),
       approved: approval.approved,
       newApproved: data.approved === null ? data.approved : data.approved === true ? 1 : 0,

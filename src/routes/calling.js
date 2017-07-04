@@ -1,5 +1,7 @@
 "use strict";
 
+const config = require("../../config.json");
+
 const tean = require("tean");
 
 const approval = require("../controllers/approval.js");
@@ -22,6 +24,9 @@ exports.add = app => {
       // phoneNumber: "801-830-7917",
       // bishopConsulted: true,
       // councilRepConsulted: false,
+      stake: config.stake.name,
+      wards: config.stake.wards,
+      canSkipStakeApproval: security.canSkipStakeApproval(req),
     });
   });
 
@@ -84,6 +89,9 @@ exports.add = app => {
         phoneNumber: calling.phoneNumber,
         bishopConsulted: !!calling.bishopConsulted,
         councilRepConsulted: !!calling.councilRepConsulted,
+        stake: config.stake.name,
+        wards: config.stake.wards,
+        canSkipStakeApproval: security.canSkipStakeApproval(req),
       });
     }
   });
@@ -99,7 +107,7 @@ exports.add = app => {
         position: "string(45)",
         reason: "string(255)",
         templeWorthy: "bool!null",
-        ward: "string(mb2,mb3,t3,t8,t13,t14,t15)",
+        ward: `string(${config.stake.wards.join(",")})`,
         currentCalling: "string(45)",
         phoneNumber: "string(45)",
         bishopConsulted: "bool",
@@ -188,12 +196,38 @@ exports.add = app => {
 
     try {
       await db.query(`
-        DELETE FROM callings WHERE id = ?
+        UPDATE callings SET state = 6 WHERE id = ? LIMIT 1
       `, [data.id]);
     }
     catch (err) {
       console.error(err);
       res.status(500).send();
+    }
+
+    res.status(200).send();
+  });
+
+  // advance a calling
+  app.post("/calling/:id/advance", security.authorize(security.STAKE_PRESIDENCY), async (req, res, next) => {
+    let data = null;
+    try {
+      data = await tean.normalize({id: "int"}, req.params);
+    }
+    catch (err) {
+      console.warn(err);
+      res.status(400).send();
+      return;
+    }
+
+    // look up all info for calling and put into read only mode
+    let rows = null;
+    try {
+      await db.query("UPDATE callings SET state = state + 1 WHERE id = ? AND state < 5", [data.id]);
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).send();
+      return;
     }
 
     res.status(200).send();

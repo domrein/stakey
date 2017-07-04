@@ -1,5 +1,7 @@
 "use strict";
 
+const config = require("../../config.json");
+
 const tean = require("tean");
 
 const db = require("../controllers/database.js");
@@ -29,6 +31,7 @@ exports.add = app => {
 
     // display in table
     res.render("history.pug", {
+      stake: config.stake.name,
       username: security.getUsername(req),
       callings: rows,
     });

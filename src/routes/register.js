@@ -1,5 +1,7 @@
 "use strict";
 
+const config = require("../../config.json");
+
 const tean = require("tean");
 const crypto = require("crypto");
 
@@ -32,7 +34,11 @@ exports.add = app => {
       return;
     }
 
-    res.render("register.pug", {code: data.code, valid: !!rows.length});
+    res.render("register.pug", {
+      stake: config.stake.name,
+      code: data.code,
+      valid: !!rows.length,
+    });
   });
 
   app.post("/register", security.authorize(security.UNAUTHORIZED), async (req, res) => {
