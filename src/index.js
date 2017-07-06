@@ -52,6 +52,7 @@ app.use((req, res, next) => {
 app.use(bodyParser.json({type: "*/*"}));
 
 require("./routes/approval.js").add(app);
+require("./routes/assign.js").add(app);
 require("./routes/calling.js").add(app);
 require("./routes/callings.js").add(app);
 require("./routes/history.js").add(app);

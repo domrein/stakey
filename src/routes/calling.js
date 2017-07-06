@@ -47,18 +47,18 @@ exports.add = app => {
     try {
       rows = await db.query(`
         SELECT
-        id,
-        firstName,
-        middleName,
-        lastName,
-        position,
-        reason,
-        templeWorthy,
-        ward,
-        currentCalling,
-        phoneNumber,
-        bishopConsulted,
-        councilRepConsulted
+          id,
+          firstName,
+          middleName,
+          lastName,
+          position,
+          reason,
+          templeWorthy,
+          ward,
+          currentCalling,
+          phoneNumber,
+          bishopConsulted,
+          councilRepConsulted
         FROM callings WHERE id = ? LIMIT 1
       `, [data.id]);
     }
@@ -107,7 +107,7 @@ exports.add = app => {
         position: "string(45)",
         reason: "string(255)",
         templeWorthy: "bool!null",
-        ward: `string(${config.stake.wards.join(",")})`,
+        ward: `string(${config.stake.wards.map(w => w.id).join(",")})`,
         currentCalling: "string(45)",
         phoneNumber: "string(45)",
         bishopConsulted: "bool",
@@ -196,7 +196,7 @@ exports.add = app => {
 
     try {
       await db.query(`
-        UPDATE callings SET state = 6 WHERE id = ? LIMIT 1
+        UPDATE callings SET deleted = 1 WHERE id = ? LIMIT 1
       `, [data.id]);
     }
     catch (err) {
@@ -219,10 +219,9 @@ exports.add = app => {
       return;
     }
 
-    // look up all info for calling and put into read only mode
-    let rows = null;
+    // increment calling state
     try {
-      await db.query("UPDATE callings SET state = state + 1 WHERE id = ? AND state < 5", [data.id]);
+      await calling.advanceState(data.id);
     }
     catch (err) {
       console.error(err);
@@ -231,5 +230,84 @@ exports.add = app => {
     }
 
     res.status(200).send();
+  });
+
+  app.post("/calling/:id/assign", security.authorize(security.STAKE_PRESIDENCY), async (req, res, next) => {
+    let data = null;
+    try {
+      data = await tean.normalize({id: "int"}, req.params);
+      Object.assign(data, await tean.normalize({
+        action: "string(interview,sustain,setApart)",
+        assignee: "email",
+      }, req.body));
+    }
+    catch (err) {
+      console.warn(err);
+      res.status(400).send();
+      return;
+    }
+
+    // get calling info
+    let rows = null;
+    try {
+      rows = await db.query(`
+        SELECT
+          firstName,
+          lastName,
+          position,
+          phoneNumber
+        FROM callings WHERE id = ? LIMIT 1
+      `, [data.id]);
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).send();
+      return;
+    }
+    if (!rows.length) {
+      console.error(`Unable to find calling with id ${data.id}`);
+      res.status(500).send();
+      return;      
+    }
+    const row = rows[0];
+
+    // send assignment email
+    // TODO: add completion link 
+    // this should be a single use link that only advanced from the current state to the next (so if the state is manually advanced, the link should do nothing)
+    // this also needs to be reachable from someone not logged in
+    // copy registration setup?
+    const candidate = `${row.firstName} ${row.lastName}`;
+    const link = `${config.host}/TODO`;
+    try {
+      email.send(
+        assignee,
+        `assignments@${config.hostname}`,
+        `New ${assign.actionIdToNoun(data.action)} Assignment`,
+        `You have been assigned to conduct the ${assign.actionIdToNoun(data.action).toLowerCase()} for ${candidate} for ${row.position}. ${candidate} can be contacted at ${row.phoneNumber}. Please follow this link when you have completed the assignment. ${link}`,
+        `
+          <p>You have been assigned to conduct the ${assign.actionIdToNoun(data.action).toLowerCase()} for ${candidate} for ${row.position}.</p>
+          <p>${candidate} can be contacted at ${row.phoneNumber}.</p>
+          <p>Please follow this link when you have completed the assignment.</p>
+          <a href="${link}">${link}</a>
+        `
+      )
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).send();
+      return;      
+    }
+
+    // increment calling state
+    try {
+      await calling.advanceState(data.id);
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).send();
+      return;
+    }
+
+    res.status(200).send();    
   });
 };

@@ -6,6 +6,7 @@ const tean = require("tean");
 
 const db = require("../controllers/database.js");
 const security = require("../controllers/security.js");
+const calling = require("../controllers/calling.js");
 
 exports.add = app => {
   // view all callings
@@ -17,9 +18,11 @@ exports.add = app => {
         SELECT
           c.firstName,
           c.lastName,
-          c.position
+          c.position,
+          c.state,
+          c.deleted
         FROM callings c
-        WHERE c.state = 5
+        WHERE c.state = 5 OR c.deleted = 1
         ORDER BY id DESC
         LIMIT 100
       `, []);
@@ -33,7 +36,12 @@ exports.add = app => {
     res.render("history.pug", {
       stake: config.stake.name,
       username: security.getUsername(req),
-      callings: rows,
+      callings: rows.map(r => ({
+        name: `${r.firstName} ${r.lastName}`,
+        position: r.position,
+        state: calling.stateIdToName(r.state),
+        deleted: r.deleted ? "Yes" : "No",
+      })),
     });
   });
 }

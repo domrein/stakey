@@ -36,7 +36,7 @@ exports.add = app => {
             WHERE a.callingId = c.id AND a.approved IS NULL AND a.state = c.state
         	) AS pendingCount
         FROM callings c
-        WHERE c.state < 5
+        WHERE c.state < 5 AND deleted = 0
       `, []);
     }
     catch (err) {
@@ -50,6 +50,7 @@ exports.add = app => {
       stake: config.stake.name,
       username: security.getUsername(req),
       canCreate: security.canCreateCalling(req),
+      canUpdateState: security.canUpdateCallingState(req),
       tables: [{
         name: "Pending Presidency Approval",
         callings: rows.filter(r => r.state === 0),

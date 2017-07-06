@@ -1,0 +1,18 @@
+extends page.pug
+
+append head
+  script.
+    const assignAction(id, action) {
+      
+    }
+
+append content
+  h3 #{stake}
+
+  h1 Assign #{action}
+  span Candidate: #{candidate}
+  span Position: #{position}
+  .horizontal-start-items
+    div Assignee Email:
+    input#emailInput(type="email")
+  button Send

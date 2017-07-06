@@ -27,6 +27,7 @@ CREATE TABLE `callings` (
   `councilRepConsulted` tinyint(3) unsigned DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `state` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `deleted` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 -- state enums:
@@ -36,7 +37,6 @@ CREATE TABLE `callings` (
 -- 3 = pending sustaining
 -- 4 = pending setting apart
 -- 5 = complete
--- 6 = deleted
 
 DROP TABLE IF EXISTS `approvals`;
 CREATE TABLE `approvals` (

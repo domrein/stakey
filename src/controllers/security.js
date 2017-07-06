@@ -46,8 +46,10 @@ module.exports = {
   },
 
   canSkipStakeApproval(req) {
-    console.log(req.session.authLevel);
-    console.log(req.session.authLevel >= this.STAKE_PRESIDENCY);
     return req.session.authLevel >= this.STAKE_PRESIDENCY;
   },
+
+  canUpdateCallingState(req) {
+    return req.session.authLevel >= this.STAKE_PRESIDENCY;
+  }
 };

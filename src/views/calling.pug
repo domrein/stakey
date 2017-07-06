@@ -86,23 +86,6 @@ append content
       each _ward in wards
         input(id=`${_ward.id}` type="radio" name="ward" value=`${_ward.id}` checked=ward === _ward.id)
         label(for=`${_ward.id}`) #{_ward.name}
-
-    //- h2 #{table.name}
-
-    //-   input#mb2(type="radio" name="ward" value="mb2" checked=ward === "mb2")
-    //-   label(for="mb2") MB2
-    //-   input#mb3(type="radio" name="ward" value="mb3" checked=ward === "mb3")
-    //-   label(for="mb3") MB3
-    //-   input#t3(type="radio" name="ward" value="t3" checked=ward === "t3")
-    //-   label(for="t3") T3
-    //-   input#t8(type="radio" name="ward" value="t8" checked=ward === "t8")
-    //-   label(for="t8") T8
-    //-   input#t13(type="radio" name="ward" value="t13" checked=ward === "t13")
-    //-   label(for="t13") T13
-    //-   input#t14(type="radio" name="ward" value="t14" checked=ward === "t14")
-    //-   label(for="t14") T14
-    //-   input#t15(type="radio" name="ward" value="t15" checked=ward === "t15")
-    //-   label(for="t15") T15
     .horizontal-start-items
       div Current Calling:
       input#currentCallingInput(type="text" value=`${currentCalling || ""}`)

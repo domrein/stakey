@@ -14,7 +14,6 @@ append head
     }
 
 append content
-  div(style="display: flex; flex-direction: row; justify-content: space-between;")
   h3 #{stake}
 
   h1 History
@@ -22,7 +21,11 @@ append content
     tr
       th Candidate
       th Position
+      th State
+      th Deleted
     each calling in callings
       tr
-        td #{approval.firstName} #{approval.lastName}
-        td #{approval.position}
+        td #{calling.name}
+        td #{calling.position}
+        td #{calling.state}
+        td #{calling.deleted}
