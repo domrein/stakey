@@ -1,4 +1,6 @@
 "use strict";
+
+const db = require("../controllers/database.js");
  
  module.exports = {
   stateIdToName(id) {
@@ -10,6 +12,17 @@
       case 3: name =  "Pending Sustaining"; break;
       case 4: name =  "Pending Setting Apart"; break;
       case 5: name =  "Complete"; break;
+    }
+
+    return name;
+  },
+  
+  stateIdToAssignment(id) {
+    let name = "Unknown";
+    switch (id) {
+      case 2: name =  "Interview"; break;
+      case 3: name =  "Sustaining"; break;
+      case 4: name =  "Setting Apart"; break;
     }
 
     return name;

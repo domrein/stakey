@@ -2,8 +2,36 @@ extends page.pug
 
 append head
   script.
-    const assignAction(id, action) {
-      
+    "use strict";
+
+    let makingAssignment = false;
+    const onMakeAssignment = (id, action) => {
+      if (makingAssignment) {
+        return;
+      }
+      makingAssignment = true;
+
+      const oReq = new XMLHttpRequest();
+      oReq.addEventListener("load", function() {
+        makingAssignment = false;
+        // TODO: handle/display error
+        // console.log(this.responseText);
+        window.location = "/callings";
+      });
+      oReq.open("POST", `/calling/${id}/assign`);
+      oReq.send(JSON.stringify({
+        action,
+        assignee: document.getElementById("emailInput").value,
+      }));
+    };
+
+  style.
+    input {
+      width: 200px;
+    }
+
+    button {
+      width: 70px;
     }
 
 append content
@@ -15,4 +43,4 @@ append content
   .horizontal-start-items
     div Assignee Email:
     input#emailInput(type="email")
-  button Send
+  button(onclick=`onMakeAssignment(${callingId}, "${action}")`) Send

@@ -24,7 +24,7 @@ exports.add = app => {
     }
     catch (err) {
       console.warn(err);
-      // TODO: add an "oops" page instead of just 500
+      // TODO: add an "oops" page instead of just 400
       res.status(400).send();
       return;
     }

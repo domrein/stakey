@@ -6,6 +6,7 @@ const tean = require("tean");
 
 const db = require("../controllers/database.js");
 const security = require("../controllers/security.js");
+const calling = require("../controllers/calling.js");
 
 exports.add = app => {
   app.get("/assign/:callingId", security.authorize(security.STAKE_PRESIDENCY), async (req, res, next) => {
@@ -21,10 +22,10 @@ exports.add = app => {
     }
 
     // look up calling data
-    let calling = null;
+    let row = null;
     try {
-      calling = await db.query(`
-        SELECT c.firstName, c.lastName, c.position
+      row = await db.query(`
+        SELECT c.id, c.firstName, c.lastName, c.position, c.state
         FROM callings c
         WHERE c.id = ?
         LIMIT 1
@@ -37,17 +38,20 @@ exports.add = app => {
     }
 
     // 404 if no record
-    if (!calling.length) {
+    if (!row.length) {
       next();
       return;
     }
 
-    calling = calling[0];
+    row = row[0];
 
     res.render("assign.pug", {
-      action: config.stake.name,
-      candidate: `${calling.firstName} ${calling.lastName}`,
-      position: calling.position,
+      stake: config.stake.name,
+      username: security.getUsername(req),
+      callingId: row.id,
+      action: calling.stateIdToAssignment(row.state + 1),
+      candidate: `${row.firstName} ${row.lastName}`,
+      position: row.position,
     });
   });
 };

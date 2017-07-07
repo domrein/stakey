@@ -81,20 +81,15 @@ append content
             td #{approval.approvalCount}
             td #{approval.denialCount}
             td #{approval.pendingCount}
-            if canUpdateState
-              td(style="display: flex;" onclick="event.stopPropagation()")
-                if approval.state !== 4
-                  button(onclick=`advanceCalling(${approval.id})`) Advance
-                
-                if approval.state === 1
-                  span &nbsp;-&nbsp;
-                  button(onclick=`assignCalling(${approval.id}, "interview")`) Assign
-                else if approval.state === 2
-                  span &nbsp;-&nbsp;
-                  button(onclick=`assignCalling(${approval.id}, "sustain")`) Assign
-                else if approval.state === 3
-                  span &nbsp;-&nbsp;
-                  button(onclick=`assignCalling(${approval.id}, "setApart")`) Assign
-                
-                if approval.state === 4
-                  button(onclick=`advanceCalling(${approval.id})`) Complete
+          if canUpdateState
+            td(onclick="event.stopPropagation()")
+              if approval.state === 0
+                button(onclick=`advanceCalling(${approval.id})`) Advance              
+              else if approval.state === 1
+                button(onclick=`assignCalling(${approval.id}, "interview")`) Assign
+              else if approval.state === 2
+                button(onclick=`assignCalling(${approval.id}, "sustain")`) Assign
+              else if approval.state === 3
+                button(onclick=`assignCalling(${approval.id}, "setApart")`) Assign
+              else if approval.state === 4
+                button(onclick=`advanceCalling(${approval.id})`) Complete

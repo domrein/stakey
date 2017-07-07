@@ -57,6 +57,18 @@ CREATE TABLE `registration` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `code` varchar(16) COLLATE utf8_bin NOT NULL,
   `level` tinyint(3) unsigned NOT NULL,
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `expiration` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+DROP TABLE IF EXISTS `assignments`;
+CREATE TABLE `assignments` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `linkCode` varchar(16) COLLATE utf8_bin NOT NULL,
+  `callingId` int(10) unsigned NOT NULL,
+  `callingState` tinyint(3) unsigned NOT NULL,
+  `completed` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

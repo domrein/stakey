@@ -13,7 +13,7 @@ exports.add = app => {
   app.get("/register/:code", security.authorize(security.UNAUTHORIZED), async (req, res) => {
     let data = null;
     try {
-      data = await tean.normalize({code: "string(32)"}, req.params);
+      data = await tean.normalize({code: "string(16)"}, req.params);
     }
     catch (err) {
       console.warn(err);
@@ -45,7 +45,7 @@ exports.add = app => {
     let data = null;
     try {
       data = await tean.normalize({
-        code: "string(32)",
+        code: "string(16)",
         passwordHash: "string(32)",
         email: "email",
         firstName: "string(45)",

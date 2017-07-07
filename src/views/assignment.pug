@@ -1,0 +1,7 @@
+extends page.pug
+
+append content
+  if newCompleted
+    div Your #{action} has been completed for #{candidate} for #{position}
+  else
+    div Your #{action} has already been completed for #{candidate} for #{position}

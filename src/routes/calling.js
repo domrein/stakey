@@ -7,6 +7,9 @@ const tean = require("tean");
 const approval = require("../controllers/approval.js");
 const db = require("../controllers/database.js");
 const security = require("../controllers/security.js");
+const email = require("../controllers/email.js");
+const assign = require("../controllers/assign.js");
+const calling = require("../controllers/calling.js");
 
 exports.add = app => {
   // create a new calling
@@ -280,7 +283,7 @@ exports.add = app => {
     const link = `${config.host}/TODO`;
     try {
       email.send(
-        assignee,
+        data.assignee,
         `assignments@${config.hostname}`,
         `New ${assign.actionIdToNoun(data.action)} Assignment`,
         `You have been assigned to conduct the ${assign.actionIdToNoun(data.action).toLowerCase()} for ${candidate} for ${row.position}. ${candidate} can be contacted at ${row.phoneNumber}. Please follow this link when you have completed the assignment. ${link}`,
@@ -308,6 +311,6 @@ exports.add = app => {
       return;
     }
 
-    res.status(200).send();    
+    res.status(200).send();
   });
 };
