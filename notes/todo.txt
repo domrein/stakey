@@ -1,12 +1,12 @@
 x login flow
 x register flow
-- send emails
+x send emails
   - send to presidency on creation (not to creator)
-  - send to high council after stake presidency approval completed
-  - send to assignee on assignment
+  x send to high council after stake presidency approval completed
+  x send to assignee on assignment
 - support phone layout (add media queries)
-- first goes to stake presidency, then high council
-- add checkbox for stake presidency to skip stake presidency approval (already discussed)
+x first goes to stake presidency, then high council
+x add checkbox for stake presidency to skip stake presidency approval (already discussed)
 x update pending tables to
   x Pending Presidency Approval
   x Pending High Council Approval
@@ -16,7 +16,8 @@ x update pending tables to
 x update columns
   x High Council Approvals => Approvals
   x High Council Denials => Additional Discussion
-- add assignment flow (in to be interviewed)
+x add assignment flow (in to be interviewed)
 x add history (list of completed assignment)
 x allow others (non stake callings) to create callings
 x make stake info data driven (stake name / wards)
+- remove unused scripts (jquery?)
