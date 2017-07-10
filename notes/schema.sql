@@ -1,3 +1,5 @@
+CREATE DATABASE `stakey` /*!40100 DEFAULT CHARACTER SET utf8 COLLATE utf8_bin */;
+
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
