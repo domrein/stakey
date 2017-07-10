@@ -11,7 +11,10 @@ const email = require("../controllers/email.js");
 
 exports.add = app => {
   app.get("/registration", security.authorize(security.STAKE_PRESIDENCY), async (req, res) => {
-    res.render("registration.pug", {stake: config.stake.name});
+    res.render("registration.pug", {
+      stake: config.stake.name,
+      username: security.getUsername(req),
+    });
   });
 
   app.post("/registration", security.authorize(security.STAKE_PRESIDENCY), async (req, res) => {

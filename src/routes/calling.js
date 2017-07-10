@@ -28,6 +28,7 @@ exports.add = app => {
       // bishopConsulted: true,
       // councilRepConsulted: false,
       stake: config.stake.name,
+      username: security.getUsername(req),
       wards: config.stake.wards,
       canSkipStakeApproval: security.canSkipStakeApproval(req),
     });
@@ -78,6 +79,7 @@ exports.add = app => {
     else {
       const calling = rows[0];
       res.render("calling.pug", {
+        username: security.getUsername(req),
         id: calling.id,
         viewMode: true,
         canDelete: security.canDeleteCalling(req),
