@@ -58,7 +58,7 @@ exports.add = app => {
         Congrats! You're almost ready to start using stakey. Follow this link ${config.host}/register/${registrationCode}
       `, `
         <h3>Congrats!</h3>
-        <p>You're almost ready to start using stakey. Following this link<a href="${config.host}/register/${registrationCode}">${config.host}/register/${registrationCode}</a></p>
+        <p>You're almost ready to start using stakey. Follow this link:&nbsp;<a href="${config.host}/register/${registrationCode}">${config.host}/register/${registrationCode}</a></p>
       `);
     }
     catch (err) {
