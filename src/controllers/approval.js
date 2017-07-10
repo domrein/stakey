@@ -57,35 +57,37 @@ exports.generateApprovals = async callingId => {
     emails.push({email: user.email, code: code.generate(16), id: user.id});
   }
 
-  try {
-    // insert approvals
-    await db.query(`
-      INSERT INTO approvals (callingId, state, approverId, linkCode)
-      VALUES ?
-    `, [emails.map(e => [callingId, state, e.id, e.code])]);
+  if (emails.length) {
+    try {
+      // insert approvals
+      await db.query(`
+        INSERT INTO approvals (callingId, state, approverId, linkCode)
+        VALUES ?
+      `, [emails.map(e => [callingId, state, e.id, e.code])]);
 
-    emails.forEach(e => {
-      try {
-        email.send(
-          e.email,
-          "approvals@stakey.paulmilham.com",
-          "Calling Review",
-          `Do you want to approve ${candidate} for ${position}? Approve: ${config.host}/approval/${e.code}?approved=true Discuss: ${config.host}/approval/${e.code}?approved=false`,
-          `
-          <p>Do you want to approve ${candidate} for ${position}?</p>
-          <div><a href="${config.host}/approval/${e.code}?approved=true">Approve</a></div>
-          <div><a href="${config.host}/approval/${e.code}?approved=false">Discuss</a></div>
-          `,
-        );
-      }
-      catch (err) {
-        // TODO: handle email error
-        console.error(`Error sending email: ${err}`);
-      }
-    });
-  }
-  catch (err) {
-    console.error(err);
-    throw new Error("Unable to send emails");
+      emails.forEach(e => {
+        try {
+          email.send(
+            e.email,
+            "approvals@stakey.paulmilham.com",
+            "Calling Review",
+            `Do you want to approve ${candidate} for ${position}? Approve: ${config.host}/approval/${e.code}?approved=true Discuss: ${config.host}/approval/${e.code}?approved=false`,
+            `
+            <p>Do you want to approve ${candidate} for ${position}?</p>
+            <div><a href="${config.host}/approval/${e.code}?approved=true">Approve</a></div>
+            <div><a href="${config.host}/approval/${e.code}?approved=false">Discuss</a></div>
+            `,
+          );
+        }
+        catch (err) {
+          // TODO: handle email error
+          console.error(`Error sending email: ${err}`);
+        }
+      });
+    }
+    catch (err) {
+      console.error(err);
+      throw new Error("Unable to send emails");
+    }
   }
 };
