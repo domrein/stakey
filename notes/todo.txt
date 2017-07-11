@@ -20,4 +20,5 @@ x add assignment flow (in to be interviewed)
 x add history (list of completed assignment)
 x allow others (non stake callings) to create callings
 x make stake info data driven (stake name / wards)
-- remove unused scripts (jquery?)
+x remove unused scripts (jquery?)
+x optimize background image (it's like 2 megs :( )
