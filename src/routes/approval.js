@@ -6,6 +6,7 @@ const tean = require("tean");
 
 const db = require("../controllers/database.js");
 const security = require("../controllers/security.js");
+const email = require("../controllers/email.js");
 
 exports.add = app => {
   app.get("/approval/:linkCode", security.authorize(security.UNAUTHORIZED), async (req, res, next) => {
@@ -25,7 +26,7 @@ exports.add = app => {
     let approval = null;
     try {
       approval = await db.query(`
-        SELECT a.callingId, c.firstName, c.middleName, c.lastName, c.position, a.approved, a.id
+        SELECT a.callingId, c.firstName, c.middleName, c.lastName, c.position, a.approved, a.id, c.state
         FROM approvals a
         INNER JOIN callings c ON a.callingId = c.id
         WHERE a.linkCode = ?
@@ -59,19 +60,20 @@ exports.add = app => {
     }
 
     // Callings are manually moved through tiers by stake presidency
-    // // move calling into ready for approval if all council members have approved/denied
-    // try {
-    //   const result = db.query(`
-    //     SELECT COUNT(*) AS total FROM approvals WHERE callingId = ? AND approved IS NULL
-    //   `, [approval.callingId]);
-    //   if (!result.total) {
-    //     await db.query("UPDATE callings SET state = 1 WHERE id = ?", [approval.callingId]);
-    //   }
-    // }
-    // catch (err) {
-    //   console.error(`Error attempting to move calling to ready queue ${err}`);
-    // }
-    // TODO: Email secretary that all approvals have been met and action is needed to move to next phase
+    //  Email secretary if calling is ready to be moved to next state
+    try {
+      // TODO: skip this if calling has manually been advanced to a new state
+      //   we don't want to notify secretary if it's irrelevant
+      const result = await db.query(`
+        SELECT COUNT(*) AS total FROM approvals WHERE callingId = ? AND approved IS NULL
+      `, [approval.callingId]);
+      if (!result[0].total) {
+        await email.notifySecretary(`${approval.firstName} ${approval.lastName}`, approval.position, approval.state, approval.callingId);
+      }
+    }
+    catch (err) {
+      console.error(`Error attempting to notify secretaries for approval completion ${err}`);
+    }
 
     res.render("approval.pug", {
       stake: config.stake.name,

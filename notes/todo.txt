@@ -7,6 +7,7 @@ x send emails
 - support phone layout (add media queries)
 x first goes to stake presidency, then high council
 x add checkbox for stake presidency to skip stake presidency approval (already discussed)
+  - make it work
 x update pending tables to
   x Pending Presidency Approval
   x Pending High Council Approval
@@ -22,3 +23,6 @@ x allow others (non stake callings) to create callings
 x make stake info data driven (stake name / wards)
 x remove unused scripts (jquery?)
 x optimize background image (it's like 2 megs :( )
+- make sure emails aren't flagged as spam
+- add buttons to calling/:id for assign/advance etc
+- do audit of TODOs in code

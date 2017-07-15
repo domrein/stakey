@@ -7,11 +7,14 @@ CREATE TABLE `users` (
   `lastName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `email` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `level` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `isSecretary` tinyint(3) NOT NULL DEFAULT '0',
   `passwordHash` varchar(128) COLLATE utf8_bin DEFAULT NULL,
   `salt` varchar(32) COLLATE utf8_bin DEFAULT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+-- isSecretary - this user is notified when callings need to be actioned
+--   user should also be notified when stake president is assigned something
 
 DROP TABLE IF EXISTS `callings`;
 CREATE TABLE `callings` (

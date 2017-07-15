@@ -7,6 +7,7 @@ const tean = require("tean");
 const db = require("../controllers/database.js");
 const security = require("../controllers/security.js");
 const calling = require("../controllers/calling.js");
+const email = require("../controllers/email.js");
 
 exports.add = app => {
   app.get("/assignment/:linkCode", security.authorize(security.UNAUTHORIZED), async (req, res, next) => {
@@ -26,7 +27,7 @@ exports.add = app => {
     let assignment = null;
     try {
       assignment = await db.query(`
-        SELECT a.callingId, c.firstName, c.lastName, c.position, c.state, a.approved, a.id, a.callingState, a .completed
+        SELECT a.callingId, c.firstName, c.lastName, c.position, c.state, a.approved, a.id, a.callingState, a.completed
         FROM assignments a
         INNER JOIN callings c ON a.callingId = c.id
         WHERE a.linkCode = ?
@@ -59,20 +60,16 @@ exports.add = app => {
       }
     }
 
-    // TODO: Email secretary that assignment has been completed
-    
-    // only advance calling if it's still in the same state as when the assignment was made
-    // BUG: we can't advance the calling automatically because then the secretary has no chance to assign for the next phase
-    // if (assignment.callingState === assignment.state) {
-    //   try {
-    //     await calling.advanceState(assignment.callingId);
-    //   }
-    //   catch (err) {
-    //     console.error(err);
-    //     res.status(500).send();
-    //     return;      
-    //   }
-    // }
+    // Email secretary that assignment has been completed
+    // Only email if it's still in the same state as when the assignment was made
+    if (assignment.callingState === assignment.state) {
+      try {
+        await email.notifySecretary(`${assignment.firstName} ${assignment.lastName}`, assignment.position, assignment.state, assignment.callingId);
+      }
+      catch (err) {
+        console.error(`Error attempting to notify secretaries for assignment completion ${err}`);
+      }
+    }
 
     res.render("assignment.pug", {
       stake: config.stake.name,

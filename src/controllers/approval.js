@@ -48,7 +48,7 @@ exports.generateApprovals = async callingId => {
   }
   catch (err) {
     console.error(err);
-    throw new Error("Unable to send emails");
+    throw new Error("UNABLE_TO_SEND_EMAIL");
   }
 
   // generate data for emails
@@ -69,7 +69,7 @@ exports.generateApprovals = async callingId => {
         try {
           email.send(
             e.email,
-            "approvals@stakey.paulmilham.com",
+            `approvals@${config.hostname}`,
             "Calling Review",
             `Do you want to approve ${candidate} for ${position}? Approve: ${config.host}/approval/${e.code}?approved=true Discuss: ${config.host}/approval/${e.code}?approved=false`,
             `
@@ -80,14 +80,14 @@ exports.generateApprovals = async callingId => {
           );
         }
         catch (err) {
-          // TODO: handle email error
-          console.error(`Error sending email: ${err}`);
+          console.error(err);
+          throw new Error("UNABLE_TO_SEND_EMAIL");
         }
       });
     }
     catch (err) {
       console.error(err);
-      throw new Error("Unable to send emails");
+      throw new Error("UNABLE_TO_SEND_EMAIL");
     }
   }
 };
