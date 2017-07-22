@@ -49,7 +49,7 @@ exports.add = app => {
       stake: config.stake.name,
       username: security.getUsername(req),
       callingId: row.id,
-      action: calling.stateIdToAssignment(row.state + 1),
+      action: calling.stateIdToAction(row.state + 1),
       candidate: `${row.firstName} ${row.lastName}`,
       position: row.position,
     });

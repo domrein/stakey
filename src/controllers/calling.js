@@ -28,6 +28,17 @@ const db = require("../controllers/database.js");
     return name;
   },
 
+  stateIdToAction(id) {
+    let name = "unknown";
+    switch (id) {
+      case 2: name =  "interview"; break;
+      case 3: name =  "sustain"; break;
+      case 4: name =  "setApart"; break;
+    }
+
+    return name;
+  },
+
   async advanceState(id) {
     return await db.query("UPDATE callings SET state = state + 1 WHERE id = ? AND state < 5", [id]);
   },

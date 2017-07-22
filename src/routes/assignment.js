@@ -74,7 +74,7 @@ exports.add = app => {
     res.render("assignment.pug", {
       stake: config.stake.name,
       username: security.getUsername(req),
-      action: calling.stateIdToAssignment(assignment.callingState),
+      action: calling.stateIdToAction(assignment.callingState),
       newCompleted: !!assignment.completed,
       candidate: `${assignment.firstName} ${assignment.lastName}`,
       position: assignment.position,

@@ -71,6 +71,8 @@ append content
           th Approvals
           th Additional Discussion
           th Pending
+        else
+          th Completed
         if canUpdateState
           th Action
       each approval in table.callings
@@ -81,6 +83,8 @@ append content
             td #{approval.approvalCount}
             td #{approval.denialCount}
             td #{approval.pendingCount}
+          else
+            td #{approval.assignmentCompleted}
           if canUpdateState
             td(onclick="event.stopPropagation()")
               if approval.state === 0

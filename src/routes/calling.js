@@ -10,6 +10,7 @@ const security = require("../controllers/security.js");
 const email = require("../controllers/email.js");
 const assign = require("../controllers/assign.js");
 const calling = require("../controllers/calling.js");
+const code = require("../utils/code.js");
 
 exports.add = app => {
   // create a new calling
@@ -27,6 +28,7 @@ exports.add = app => {
       // phoneNumber: "801-830-7917",
       // bishopConsulted: true,
       // councilRepConsulted: false,
+      
       stake: config.stake.name,
       username: security.getUsername(req),
       wards: config.stake.wards,
@@ -257,6 +259,8 @@ exports.add = app => {
     try {
       rows = await db.query(`
         SELECT
+          id,
+          state,
           firstName,
           lastName,
           position,
@@ -276,13 +280,13 @@ exports.add = app => {
     }
     const row = rows[0];
 
+    const linkCode = code.generate(16);
+
     // send assignment email
-    // TODO: add completion link 
     // this should be a single use link that only advanced from the current state to the next (so if the state is manually advanced, the link should do nothing)
     // this also needs to be reachable from someone not logged in
-    // copy registration setup?
     const candidate = `${row.firstName} ${row.lastName}`;
-    const link = `${config.host}/TODO`;
+    const link = `${config.host}/assignment/${linkCode}`;
     try {
       email.send(
         data.assignee,
@@ -295,17 +299,20 @@ exports.add = app => {
           <p>Please follow this link when you have completed the assignment.</p>
           <a href="${link}">${link}</a>
         `
-      )
+      );
     }
     catch (err) {
       console.error(err);
       res.status(500).send();
-      return;      
+      return;
     }
 
-    // increment calling state
+    // create assignment
     try {
-      await calling.advanceState(data.id);
+      await db.query(`
+        INSERT INTO assignments (linkCode, callingId, callingState)
+        VALUES (?, ?, ?)
+      `, [code, row.id, row.state]);
     }
     catch (err) {
       console.error(err);
