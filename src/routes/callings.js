@@ -34,7 +34,13 @@ exports.add = app => {
       		  SELECT COUNT(id)
             FROM approvals a
             WHERE a.callingId = c.id AND a.approved IS NULL AND a.state = c.state
-        	) AS pendingCount
+          ) AS pendingCount,
+          (
+      		  SELECT completed
+            FROM assignments a
+            WHERE a.callingId = c.id AND a.callingState = c.state
+            LIMIT 1
+          ) AS assignmentCompleted
         FROM callings c
         WHERE c.state < 5 AND deleted = 0
       `, []);
