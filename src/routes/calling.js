@@ -282,6 +282,15 @@ exports.add = app => {
 
     const linkCode = code.generate(16);
 
+    try {
+      await calling.advanceState(row.id);
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).send();
+      return;
+    }
+
     // send assignment email
     // this should be a single use link that only advanced from the current state to the next (so if the state is manually advanced, the link should do nothing)
     // this also needs to be reachable from someone not logged in
@@ -312,7 +321,7 @@ exports.add = app => {
       await db.query(`
         INSERT INTO assignments (linkCode, callingId, callingState)
         VALUES (?, ?, ?)
-      `, [code, row.id, row.state]);
+      `, [linkCode, row.id, row.state + 1]);
     }
     catch (err) {
       console.error(err);

@@ -39,6 +39,7 @@ exports.add = app => {
       		  SELECT completed
             FROM assignments a
             WHERE a.callingId = c.id AND a.callingState = c.state
+            LIMIT 1
           ) AS assignmentCompleted
         FROM callings c
         WHERE c.state < 5 AND deleted = 0
@@ -49,8 +50,6 @@ exports.add = app => {
       res.status(500).send();
       return;
     }
-
-    console.log(rows);
 
     // display in table
     res.render("callings.pug", {

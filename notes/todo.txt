@@ -25,5 +25,5 @@ x remove unused scripts (jquery?)
 x optimize background image (it's like 2 megs :( )
 - make sure emails aren't flagged as spam
 - add buttons to calling/:id for assign/advance etc
-- display completion status for assignments (completed yes/no) (interview, sustaining, setting apart)
+x display completion status for assignments (completed yes/no) (interview, sustaining, setting apart)
 - do audit of TODOs in code

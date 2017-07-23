@@ -84,7 +84,7 @@ append content
             td #{approval.denialCount}
             td #{approval.pendingCount}
           else
-            td #{approval.assignmentCompleted}
+            td #{approval.assignmentCompleted ? "Yes" : "No"}
           if canUpdateState
             td(onclick="event.stopPropagation()")
               if approval.state === 0

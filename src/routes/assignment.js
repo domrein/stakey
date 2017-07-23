@@ -27,7 +27,7 @@ exports.add = app => {
     let assignment = null;
     try {
       assignment = await db.query(`
-        SELECT a.callingId, c.firstName, c.lastName, c.position, c.state, a.approved, a.id, a.callingState, a.completed
+        SELECT a.callingId, c.firstName, c.lastName, c.position, c.state, a.id, a.callingState, a.completed
         FROM assignments a
         INNER JOIN callings c ON a.callingId = c.id
         WHERE a.linkCode = ?
@@ -74,8 +74,8 @@ exports.add = app => {
     res.render("assignment.pug", {
       stake: config.stake.name,
       username: security.getUsername(req),
-      action: calling.stateIdToAction(assignment.callingState),
-      newCompleted: !!assignment.completed,
+      action: calling.stateIdToAssignment(assignment.callingState),
+      newCompleted: !assignment.completed,
       candidate: `${assignment.firstName} ${assignment.lastName}`,
       position: assignment.position,
     });

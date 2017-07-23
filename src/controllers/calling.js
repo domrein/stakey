@@ -20,9 +20,9 @@ const db = require("../controllers/database.js");
   stateIdToAssignment(id) {
     let name = "Unknown";
     switch (id) {
-      case 2: name =  "Interview"; break;
-      case 3: name =  "Sustaining"; break;
-      case 4: name =  "Setting Apart"; break;
+      case 2: name =  "interview"; break;
+      case 3: name =  "sustaining"; break;
+      case 4: name =  "setting Apart"; break;
     }
 
     return name;
