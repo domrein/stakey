@@ -32,7 +32,9 @@ append head
 
       const oReq = new XMLHttpRequest();
       oReq.addEventListener("load", function() {
-        // TODO: handle error
+        if (this.status !== 200) {
+          alert("Something went wrong. Please contact the system administrator.");
+        }
         // console.log(this.responseText);
         window.location = "/callings";
       });
@@ -47,6 +49,9 @@ append head
     const deleteCalling = id => {
       const oReq = new XMLHttpRequest();
       oReq.addEventListener("load", function() {
+        if (this.status !== 200) {
+          alert("Something went wrong. Please contact the system administrator.");
+        }
         // console.log(this.responseText);
         window.location = "/callings";
       });

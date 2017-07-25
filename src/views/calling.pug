@@ -2,6 +2,8 @@ extends page.pug
 
 append head
   script.
+    "use strict";
+    
     const onCreateCalling = () => {
       let templeWorthy = null;
       const selected = document.querySelector("input[name='templeWorthy']:checked");
@@ -11,6 +13,9 @@ append head
 
       const oReq = new XMLHttpRequest();
       oReq.addEventListener("load", function() {
+        if (this.status !== 200) {
+          alert("Something went wrong. Please contact the system administrator.");
+        }
         // console.log(this.responseText);
         window.location = "/callings";
       });
@@ -33,6 +38,9 @@ append head
     const onDeleteCalling = () => {
       const oReq = new XMLHttpRequest();
       oReq.addEventListener("load", function() {
+        if (this.status !== 200) {
+          alert("Something went wrong. Please contact the system administrator.");
+        }
         // console.log(this.responseText);
         window.location = "/callings";
       });
@@ -51,21 +59,22 @@ append content
   .box.horizontal-spaced-items
     .vertical-items
       div First:
-      input#firstNameInput(type="text" value=`${firstName || ""}`)
+      input#firstNameInput(type="text" value=`${firstName || ""}` maxlength="45")
     .vertical-items
       div Middle:
-      input#middleNameInput(type="text" value=`${middleName || ""}`)
+      input#middleNameInput(type="text" value=`${middleName || ""}` maxlength="45")
     .vertical-items
       div Last:
-      input#lastNameInput(type="text" value=`${lastName || ""}`)
+      input#lastNameInput(type="text" value=`${lastName || ""}` maxlength="45")
 
   h3 Is recommended for the position of
   .box
     div Position:
-    input#positionInput(type="text" value=`${position || ""}`)
+    input#positionInput(type="text" value=`${position || ""}` maxlength="45")
 
   h3 Reason for change and other pertinent information about this recommendation:
-  textarea#reasonInput(value=`${reason || ""}` rows="6" style="resize: none;")
+  //- BUG: reason does not display when viewing calling
+  textarea#reasonInput(value=`${reason || ""}` rows="6" style="resize: none;" maxlength="2048")
 
   h3 Candidate Information:
   .box
@@ -82,10 +91,10 @@ append content
         label(for=`${_ward.id}`) #{_ward.name}
     .horizontal-start-items
       div Current Calling:
-      input#currentCallingInput(type="text" value=`${currentCalling || ""}`)
+      input#currentCallingInput(type="text" value=`${currentCalling || ""}` maxlength="45")
     .horizontal-start-items
       div Phone Number:
-      input#phoneNumberInput(type="text" value=`${phoneNumber || ""}`)
+      input#phoneNumberInput(type="text" value=`${phoneNumber || ""}` maxlength="45")
 
   h3 Checklist:
   .box

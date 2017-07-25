@@ -23,7 +23,7 @@ CREATE TABLE `callings` (
   `middleName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `lastName` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `position` varchar(45) COLLATE utf8_bin DEFAULT NULL,
-  `reason` varchar(255) COLLATE utf8_bin DEFAULT NULL,
+  `reason` varchar(2048) COLLATE utf8_bin DEFAULT NULL,
   `templeWorthy` tinyint(3) unsigned DEFAULT NULL,
   `ward` varchar(45) COLLATE utf8_bin DEFAULT NULL,
   `currentCalling` varchar(45) COLLATE utf8_bin DEFAULT NULL,

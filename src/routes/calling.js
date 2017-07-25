@@ -112,7 +112,7 @@ exports.add = app => {
         middleName: "string(45)",
         lastName: "string(45)",
         position: "string(45)",
-        reason: "string(255)",
+        reason: "string(2048)",
         templeWorthy: "bool!null",
         ward: `string(${config.stake.wards.map(w => w.id).join(",")})`,
         currentCalling: "string(45)",

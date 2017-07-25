@@ -14,7 +14,9 @@ append head
       const oReq = new XMLHttpRequest();
       oReq.addEventListener("load", function() {
         makingAssignment = false;
-        // TODO: handle/display error
+        if (this.status !== 200) {
+          alert("Something went wrong. Please contact the system administrator.");
+        }
         // console.log(this.responseText);
         window.location = "/callings";
       });

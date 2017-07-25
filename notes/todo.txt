@@ -27,3 +27,4 @@ x optimize background image (it's like 2 megs :( )
 - add buttons to calling/:id for assign/advance etc
 x display completion status for assignments (completed yes/no) (interview, sustaining, setting apart)
 - do audit of TODOs in code
+- BUG: reason does not display when viewing calling
