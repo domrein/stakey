@@ -245,32 +245,30 @@ exports.add = app => {
       data = await tean.normalize({id: "int"}, req.params);
       Object.assign(data, await tean.normalize({
         action: "string(interview,sustain,setApart)",
-        assignee: "email",
+        assignee: "int",
       }, req.body));
     }
     catch (err) {
       console.warn(err);
-      res.status(400).send();
+      res.status(400).send("Invalid parameters");
       return;
     }
 
     // get user info
-    let assigneeId = 0;
+    let assigneeEmail = null;
     try {
       const rows = await db.query(`
-        SELECT id
-        FROM users WHERE email = ? LIMIT 1
+        SELECT email
+        FROM users WHERE id = ? LIMIT 1
       `, [data.assignee]);
       if (!rows.length) {
-        throw new Error("Invalid email");
+        throw new Error("Invalid user");
       }
-      else {
-        assigneeId = rows[0].id;
-      }
+      assigneeEmail = rows[0].email;
     }
     catch (err) {
       console.error(err);
-      res.status(400).send(`Unable to find user with the email ${data.assignee}`);
+      res.status(400).send(`Unable to find user with id ${data.assignee}`);
       return;
     }
 
@@ -318,7 +316,7 @@ exports.add = app => {
     const link = `${config.host}/assignment/${linkCode}`;
     try {
       email.send(
-        data.assignee,
+        assigneeEmail,
         `assignments@${config.hostname}`,
         `New ${assign.actionIdToNoun(data.action)} Assignment`,
         `You have been assigned to conduct the ${assign.actionIdToNoun(data.action).toLowerCase()} for ${candidate} for ${row.position}. ${candidate} can be contacted at ${row.phoneNumber}. Please follow this link when you have completed the assignment. ${link}`,
@@ -341,7 +339,7 @@ exports.add = app => {
       await db.query(`
         INSERT INTO assignments (userId, linkCode, callingId, callingState)
         VALUES (?, ?, ?, ?)
-      `, [assigneeId, linkCode, row.id, row.state + 1]);
+      `, [data.assignee, linkCode, row.id, row.state + 1]);
     }
     catch (err) {
       console.error(err);

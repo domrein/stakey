@@ -17,7 +17,7 @@ exports.add = app => {
     }
     catch (err) {
       console.warn(err);
-      res.status(400).send();
+      res.status(400).send("Invalid parameters");
       return;
     }
 
@@ -45,6 +45,20 @@ exports.add = app => {
 
     row = row[0];
 
+    let assignees = [];
+    try {
+      const rows = await db.query(`
+        SELECT id, CONCAT(firstName, ' ', lastName) AS name
+        from users
+      `, []);
+      assignees = rows;
+    }
+    catch (err) {
+      console.error(err);
+      res.status(500).send();
+      return;
+    }
+
     res.render("assign.pug", {
       stake: config.stake.name,
       username: security.getUsername(req),
@@ -52,6 +66,7 @@ exports.add = app => {
       action: calling.stateIdToAction(row.state + 1),
       candidate: `${row.firstName} ${row.lastName}`,
       position: row.position,
+      assignees,
     });
   });
 };

@@ -27,12 +27,16 @@ append head
       oReq.open("POST", `/calling/${id}/assign`);
       oReq.send(JSON.stringify({
         action,
-        assignee: document.getElementById("emailInput").value,
+        assignee: document.getElementById("userSelect").value,
       }));
     };
 
   style.
     input {
+      width: 200px;
+    }
+    
+    select {
       width: 200px;
     }
 
@@ -47,6 +51,8 @@ append content
   span Candidate: #{candidate}
   span Position: #{position}
   .horizontal-start-items
-    div Assignee Email:
-    input#emailInput(type="email")
-  button(onclick=`onMakeAssignment(${callingId}, "${action}")`) Send
+    div Assignee:
+    select#userSelect
+      each assignee in assignees
+        option(value=`${assignee.id}`) #{assignee.name}
+  button(onclick=`onMakeAssignment(${callingId}, "${action}")`) Assign
