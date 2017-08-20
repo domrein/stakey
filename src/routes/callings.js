@@ -40,7 +40,14 @@ exports.add = app => {
             FROM assignments a
             WHERE a.callingId = c.id AND a.callingState = c.state
             LIMIT 1
-          ) AS assignmentCompleted
+          ) AS assignmentCompleted,
+          (
+      		  SELECT CONCAT(u.firstName, ' ', u.lastName)
+            FROM assignments a
+            INNER JOIN users u ON a.userId = u.id
+            WHERE a.callingId = c.id AND a.callingState = c.state
+            LIMIT 1
+          ) AS assignedTo
         FROM callings c
         WHERE c.state < 5 AND deleted = 0
       `, []);

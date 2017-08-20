@@ -70,6 +70,7 @@ CREATE TABLE `registration` (
 DROP TABLE IF EXISTS `assignments`;
 CREATE TABLE `assignments` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `userId` int(10) unsigned NOT NULL,
   `linkCode` varchar(16) COLLATE utf8_bin NOT NULL,
   `callingId` int(10) unsigned NOT NULL,
   `callingState` tinyint(3) unsigned NOT NULL,

@@ -82,6 +82,7 @@ append content
           th Pending
         else
           th Completed
+          th Assigned To
         if canUpdateState
           th Action
       each approval in table.callings
@@ -94,6 +95,7 @@ append content
             td #{approval.pendingCount}
           else
             td #{approval.assignmentCompleted ? "Yes" : "No"}
+            td #{approval.assignedTo}
           if canUpdateState
             td(onclick="event.stopPropagation()")
               if approval.state === 0

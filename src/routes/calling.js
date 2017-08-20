@@ -28,7 +28,7 @@ exports.add = app => {
       // phoneNumber: "801-830-7917",
       // bishopConsulted: true,
       // councilRepConsulted: false,
-      
+
       stake: config.stake.name,
       username: security.getUsername(req),
       wards: config.stake.wards,
@@ -254,6 +254,26 @@ exports.add = app => {
       return;
     }
 
+    // get user info
+    let assigneeId = 0;
+    try {
+      const rows = await db.query(`
+        SELECT id
+        FROM users WHERE email = ? LIMIT 1
+      `, [data.assignee]);
+      if (!rows.length) {
+        throw new Error("Invalid email");
+      }
+      else {
+        assigneeId = rows[0].id;
+      }
+    }
+    catch (err) {
+      console.error(err);
+      res.status(400).send(`Unable to find user with the email ${data.assignee}`);
+      return;
+    }
+
     // get calling info
     let rows = null;
     try {
@@ -276,7 +296,7 @@ exports.add = app => {
     if (!rows.length) {
       console.error(`Unable to find calling with id ${data.id}`);
       res.status(500).send();
-      return;      
+      return;
     }
     const row = rows[0];
 
@@ -319,9 +339,9 @@ exports.add = app => {
     // create assignment
     try {
       await db.query(`
-        INSERT INTO assignments (linkCode, callingId, callingState)
-        VALUES (?, ?, ?)
-      `, [linkCode, row.id, row.state + 1]);
+        INSERT INTO assignments (userId, linkCode, callingId, callingState)
+        VALUES (?, ?, ?, ?)
+      `, [assigneeId, linkCode, row.id, row.state + 1]);
     }
     catch (err) {
       console.error(err);

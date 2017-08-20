@@ -14,7 +14,11 @@ append head
       const oReq = new XMLHttpRequest();
       oReq.addEventListener("load", function() {
         makingAssignment = false;
-        if (this.status !== 200) {
+        if (this.status === 400) {
+          alert(this.responseText);
+          return;
+        }
+        else if (this.status !== 200) {
           alert("Something went wrong. Please contact the system administrator.");
         }
         // console.log(this.responseText);
