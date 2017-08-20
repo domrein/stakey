@@ -90,16 +90,16 @@ append content
           td #{approval.firstName} #{approval.lastName}
           td #{approval.position}
           if (table.showCounts)
-            td #{approval.approvalCount}
-            td #{approval.denialCount}
-            td #{approval.pendingCount}
+            td(title=`${approval.approvers.join("\n")}`) #{approval.approvalCount}
+            td(title=`${approval.deniers.join("\n")}`) #{approval.denialCount}
+            td(title=`${approval.penders.join("\n")}`) #{approval.pendingCount}
           else
             td #{approval.assignmentCompleted ? "Yes" : "No"}
             td #{approval.assignedTo}
           if canUpdateState
             td(onclick="event.stopPropagation()")
               if approval.state === 0
-                button(onclick=`advanceCalling(${approval.id})`) Advance              
+                button(onclick=`advanceCalling(${approval.id})`) Advance
               else if approval.state === 1
                 button(onclick=`assignCalling(${approval.id}, "interview")`) Assign
               else if approval.state === 2

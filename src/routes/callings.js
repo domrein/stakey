@@ -26,15 +26,33 @@ exports.add = app => {
             WHERE a.callingId = c.id AND a.approved = 1 AND a.state = c.state
         	) AS approvalCount,
           (
+            SELECT GROUP_CONCAT(CONCAT(u.firstName, ' ', u.lastName))
+            FROM approvals a
+            INNER JOIN users u ON a.approverId = u.id
+            WHERE a.callingId = c.id AND a.approved = 1 AND a.state = c.state
+          ) AS approvers,
+          (
       		  SELECT COUNT(id)
             FROM approvals a
             WHERE a.callingId = c.id AND a.approved = 0 AND a.state = c.state
         	) AS denialCount,
           (
+            SELECT GROUP_CONCAT(CONCAT(u.firstName, ' ', u.lastName))
+            FROM approvals a
+            INNER JOIN users u ON a.approverId = u.id
+            WHERE a.callingId = c.id AND a.approved = 0 AND a.state = c.state
+          ) AS deniers,
+          (
       		  SELECT COUNT(id)
             FROM approvals a
             WHERE a.callingId = c.id AND a.approved IS NULL AND a.state = c.state
           ) AS pendingCount,
+          (
+            SELECT GROUP_CONCAT(CONCAT(u.firstName, ' ', u.lastName))
+            FROM approvals a
+            INNER JOIN users u ON a.approverId = u.id
+            WHERE a.callingId = c.id AND a.approved IS NULL AND a.state = c.state
+          ) AS penders,
           (
       		  SELECT completed
             FROM assignments a
@@ -57,6 +75,13 @@ exports.add = app => {
       res.status(500).send();
       return;
     }
+
+    // massage data for view
+    rows.forEach(r => {
+      r.approvers = r.approvers ? r.approvers.split(",") : [];
+      r.deniers = r.deniers ? r.deniers.split(",") : [];
+      r.penders = r.penders ? r.penders.split(",") : [];
+    });
 
     // display in table
     res.render("callings.pug", {
