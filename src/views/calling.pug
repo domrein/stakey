@@ -73,8 +73,7 @@ append content
     input#positionInput(type="text" value=`${position || ""}` maxlength="45")
 
   h3 Reason for change and other pertinent information about this recommendation:
-  //- BUG: reason does not display when viewing calling
-  textarea#reasonInput(value=`${reason || ""}` rows="6" style="resize: none;" maxlength="2048")
+  textarea#reasonInput(rows="6" style="resize: none;" maxlength="2048") #{reason || ""}
 
   h3 Candidate Information:
   .box
