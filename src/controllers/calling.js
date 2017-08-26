@@ -1,8 +1,20 @@
 "use strict";
 
 const db = require("../controllers/database.js");
- 
+
  module.exports = {
+  minStateId: 0,
+  maxStateId: 5,
+
+  states: {
+    stakePresidency: 0,
+    highCouncil: 1,
+    interview: 2,
+    sustaining: 3,
+    settingApart: 4,
+    complete: 5,
+  },
+
   stateIdToName(id) {
     let name = "Unknown";
     switch (id) {
@@ -16,7 +28,7 @@ const db = require("../controllers/database.js");
 
     return name;
   },
-  
+
   stateIdToAssignment(id) {
     let name = "Unknown";
     switch (id) {
@@ -39,7 +51,12 @@ const db = require("../controllers/database.js");
     return name;
   },
 
-  async advanceState(id) {
-    return await db.query("UPDATE callings SET state = state + 1 WHERE id = ? AND state < 5", [id]);
+  async updateState(id, advance) {
+    if (advance) {
+      return await db.query("UPDATE callings SET state = state + 1 WHERE id = ? AND state < 5", [id]);
+    }
+    else {
+      return await db.query("UPDATE callings SET state = state - 1 WHERE id = ? AND state > 0", [id]);
+    }
   },
  };

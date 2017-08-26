@@ -4,7 +4,13 @@ append head
   script.
     "use strict";
     
+    let creatingCalling = false;
     const onCreateCalling = () => {
+      if (creatingCalling) {
+        return;
+      }
+      creatingCalling = true;
+      
       let templeWorthy = null;
       const selected = document.querySelector("input[name='templeWorthy']:checked");
       if (selected) {
@@ -15,6 +21,7 @@ append head
       oReq.addEventListener("load", function() {
         if (this.status !== 200) {
           alert("Something went wrong. Please contact the system administrator.");
+          creatingCalling = false;
         }
         // console.log(this.responseText);
         window.location = "/callings";
@@ -34,12 +41,19 @@ append head
         councilRepConsulted: document.getElementById("councilRepConsultedInput").checked,
       }));
     };
-
+    
+    let deletingCalling = false;
     const onDeleteCalling = () => {
+      if (deletingCalling) {
+        return;
+      }
+      deletingCalling = true;
+      
       const oReq = new XMLHttpRequest();
       oReq.addEventListener("load", function() {
         if (this.status !== 200) {
           alert("Something went wrong. Please contact the system administrator.");
+          deletingCalling = false;
         }
         // console.log(this.responseText);
         window.location = "/callings";
@@ -47,12 +61,35 @@ append head
       oReq.open("DELETE", "/calling/#{id}");
       oReq.send();
     };
+    
+    let regressingCalling = false;
+    const onRegressCalling = () => {
+      if (regressingCalling) {
+        return;
+      }
+      regressingCalling = true;
+      
+      const oReq = new XMLHttpRequest();
+      oReq.addEventListener("load", function() {
+        if (this.status !== 200) {
+          alert("Something went wrong. Please contact the system administrator.");
+          regressingCalling = false;
+        }
+        // console.log(this.responseText);
+        window.location = "/callings";
+      });
+      oReq.open("POST", "/calling/#{id}/updateState?advance=false");
+      oReq.send();      
+    };
 
 append content
-  div(style="display: flex; flex-direction: row; justify-content: space-between;")
+  div(style="display: flex; justify-content: space-between;")
     a(href="/callings") View all Callings
-    if viewMode && canDelete
-      button(onclick="onDeleteCalling()") DELETE CALLING
+    div(style="display: flex;")
+      if viewMode && canRegressCallingState
+        button(onclick="onRegressCalling()") REGRESS CALLING
+      if viewMode && canDelete
+        button(onclick="onDeleteCalling()") DELETE CALLING
   h3 #{stake}
 
   h1 Interview Recommendation Form

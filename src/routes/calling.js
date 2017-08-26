@@ -64,7 +64,8 @@ exports.add = app => {
           currentCalling,
           phoneNumber,
           bishopConsulted,
-          councilRepConsulted
+          councilRepConsulted,
+          state
         FROM callings WHERE id = ? LIMIT 1
       `, [data.id]);
     }
@@ -99,6 +100,7 @@ exports.add = app => {
         stake: config.stake.name,
         wards: config.stake.wards,
         canSkipStakeApproval: security.canSkipStakeApproval(req),
+        canRegressCallingState: security.canUpdateCallingState(req) && calling.state,
       });
     }
   });
@@ -214,11 +216,12 @@ exports.add = app => {
     res.status(200).send();
   });
 
-  // advance a calling
-  app.post("/calling/:id/advance", security.authorize(security.STAKE_PRESIDENCY), async (req, res, next) => {
+  // advance or regress a calling's state
+  app.post("/calling/:id/updateState", security.authorize(security.STAKE_PRESIDENCY), async (req, res, next) => {
     let data = null;
     try {
       data = await tean.normalize({id: "int"}, req.params);
+      Object.assign(data, await tean.normalize({advance: "bool!null"}, req.query));
     }
     catch (err) {
       console.warn(err);
@@ -226,14 +229,84 @@ exports.add = app => {
       return;
     }
 
+    // get calling state
+    let callingState = null;
+    try {
+      const rows = await db.query(`
+        SELECT state
+        FROM callings WHERE id = ? LIMIT 1
+      `, [data.id]);
+      if (!rows.length) {
+        throw new Error("Invalid calling");
+      }
+      callingState = rows[0].state;
+    }
+    catch (err) {
+      console.error(err);
+      res.status(400).send(`Unable to find calling with id ${data.id}`);
+      return;
+    }
+
+    // bail out if invalid transformation
+    if (callingState <= calling.minStateId && !data.advance) {
+      res.status(400).send(`Unable to regress calling past ${calling.stateIdToName(callingState)}`);
+    }
+    // use assign to move past high council
+    else if (callingState >= calling.states.highCouncil && data.advance) {
+      res.status(400).send(`Unable to advance calling past ${calling.stateIdToName(callingState)}`);
+    }
+
     // increment calling state
     try {
-      await calling.advanceState(data.id);
+      await calling.updateState(data.id, data.advance);
     }
     catch (err) {
       console.error(err);
       res.status(500).send();
       return;
+    }
+
+    // if regressing, invalidate current calling approvals
+    if (callingState === calling.states.highCouncil && !data.advance) {
+      try {
+        await db.query(`
+          UPDATE approvals
+          SET deleted = 1
+          WHERE callingId = ? AND state = ?
+        `, [data.id, callingState]);
+      }
+      catch (err) {
+        console.error(err);
+        res.status(500).send();
+        return;
+      }
+    }
+    // otherwise delete assignment
+    else if (data.advance) {
+      try {
+        await db.query(`
+          UPDATE assignments
+          SET deleted = 1
+          WHERE callingId = ? AND callingState = ?
+        `, [data.id, callingState]);
+      }
+      catch (err) {
+        console.error(err);
+        res.status(500).send();
+        return;
+      }
+    }
+
+    // if advancing from stake presidency to high council, generate approvals
+    if (callingState === calling.states.stakePresidency && data.advance) {
+      try {
+        await approval.generateApprovals(data.id);
+      }
+      catch (err) {
+        console.error(err);
+        res.status(500).send();
+        return;
+      }
     }
 
     res.status(200).send();
@@ -301,7 +374,7 @@ exports.add = app => {
     const linkCode = code.generate(16);
 
     try {
-      await calling.advanceState(row.id);
+      await calling.updateState(row.id, true);
     }
     catch (err) {
       console.error(err);

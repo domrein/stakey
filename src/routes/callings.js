@@ -23,47 +23,47 @@ exports.add = app => {
           (
     		    SELECT COUNT(id)
             FROM approvals a
-            WHERE a.callingId = c.id AND a.approved = 1 AND a.state = c.state
+            WHERE a.callingId = c.id AND a.approved = 1 AND a.state = c.state AND a.deleted = 0
         	) AS approvalCount,
           (
             SELECT GROUP_CONCAT(CONCAT(u.firstName, ' ', u.lastName))
             FROM approvals a
             INNER JOIN users u ON a.approverId = u.id
-            WHERE a.callingId = c.id AND a.approved = 1 AND a.state = c.state
+            WHERE a.callingId = c.id AND a.approved = 1 AND a.state = c.state AND a.deleted = 0
           ) AS approvers,
           (
       		  SELECT COUNT(id)
             FROM approvals a
-            WHERE a.callingId = c.id AND a.approved = 0 AND a.state = c.state
+            WHERE a.callingId = c.id AND a.approved = 0 AND a.state = c.state AND a.deleted = 0
         	) AS denialCount,
           (
             SELECT GROUP_CONCAT(CONCAT(u.firstName, ' ', u.lastName))
             FROM approvals a
             INNER JOIN users u ON a.approverId = u.id
-            WHERE a.callingId = c.id AND a.approved = 0 AND a.state = c.state
+            WHERE a.callingId = c.id AND a.approved = 0 AND a.state = c.state AND a.deleted = 0
           ) AS deniers,
           (
       		  SELECT COUNT(id)
             FROM approvals a
-            WHERE a.callingId = c.id AND a.approved IS NULL AND a.state = c.state
+            WHERE a.callingId = c.id AND a.approved IS NULL AND a.state = c.state AND a.deleted = 0
           ) AS pendingCount,
           (
             SELECT GROUP_CONCAT(CONCAT(u.firstName, ' ', u.lastName))
             FROM approvals a
             INNER JOIN users u ON a.approverId = u.id
-            WHERE a.callingId = c.id AND a.approved IS NULL AND a.state = c.state
+            WHERE a.callingId = c.id AND a.approved IS NULL AND a.state = c.state AND a.deleted = 0
           ) AS penders,
           (
       		  SELECT completed
             FROM assignments a
-            WHERE a.callingId = c.id AND a.callingState = c.state
+            WHERE a.callingId = c.id AND a.callingState = c.state AND a.deleted = 0
             LIMIT 1
           ) AS assignmentCompleted,
           (
       		  SELECT CONCAT(u.firstName, ' ', u.lastName)
             FROM assignments a
             INNER JOIN users u ON a.userId = u.id
-            WHERE a.callingId = c.id AND a.callingState = c.state
+            WHERE a.callingId = c.id AND a.callingState = c.state AND a.deleted = 0
             LIMIT 1
           ) AS assignedTo
         FROM callings c

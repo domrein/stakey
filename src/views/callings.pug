@@ -42,7 +42,7 @@ append head
         // console.log(this.responseText);
         window.location = "/callings";
       });
-      oReq.open("POST", `/calling/${id}/advance`);
+      oReq.open("POST", `/calling/${id}/updateState?advance=true`);
       oReq.send();
     };
 

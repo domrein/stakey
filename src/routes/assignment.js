@@ -27,7 +27,7 @@ exports.add = app => {
     let assignment = null;
     try {
       assignment = await db.query(`
-        SELECT a.callingId, c.firstName, c.lastName, c.position, c.state, a.id, a.callingState, a.completed
+        SELECT a.callingId, c.firstName, c.lastName, c.position, c.state, a.id, a.callingState, a.completed, a.deleted
         FROM assignments a
         INNER JOIN callings c ON a.callingId = c.id
         WHERE a.linkCode = ?
@@ -62,7 +62,8 @@ exports.add = app => {
 
     // Email secretary that assignment has been completed
     // Only email if it's still in the same state as when the assignment was made
-    if (assignment.callingState === assignment.state) {
+    // only email if assignment has not been deleted
+    if (assignment.callingState === assignment.state && !assignment.deleted) {
       try {
         await email.notifySecretary(`${assignment.firstName} ${assignment.lastName}`, assignment.position, assignment.state, assignment.callingId);
       }

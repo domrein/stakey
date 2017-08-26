@@ -52,6 +52,7 @@ CREATE TABLE `approvals` (
   `approved` tinyint(3) unsigned DEFAULT NULL,
   `linkCode` varchar(16) COLLATE utf8_bin NOT NULL,
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `approverId_idx` (`approverId`),
   KEY `callingId_idx` (`callingId`)
@@ -76,5 +77,6 @@ CREATE TABLE `assignments` (
   `callingState` tinyint(3) unsigned NOT NULL,
   `completed` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `created` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `deleted` tinyint(3) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;

@@ -26,7 +26,7 @@ exports.add = app => {
     let approval = null;
     try {
       approval = await db.query(`
-        SELECT a.callingId, c.firstName, c.middleName, c.lastName, c.position, a.approved, a.id, c.state
+        SELECT a.callingId, c.firstName, c.middleName, c.lastName, c.position, a.approved, a.id, c.state, a.deleted
         FROM approvals a
         INNER JOIN callings c ON a.callingId = c.id
         WHERE a.linkCode = ?
@@ -57,23 +57,27 @@ exports.add = app => {
         res.status(500).send();
         return;
       }
-    }
 
-    // Callings are manually moved through tiers by stake presidency
-    //  Email secretary if calling is ready to be moved to next state
-    try {
-      // TODO: skip this if calling has manually been advanced to a new state
-      //   we don't want to notify secretary if it's irrelevant
-      const result = await db.query(`
-        SELECT COUNT(*) AS total FROM approvals WHERE callingId = ? AND approved IS NULL
-      `, [approval.callingId]);
-      if (!result[0].total) {
-        await email.notifySecretary(`${approval.firstName} ${approval.lastName}`, approval.position, approval.state, approval.callingId);
+      // only notify if approval has not been deleted
+      if (!approval.deleted) {
+        // Callings are manually moved through tiers by stake presidency
+        //  Email secretary if calling is ready to be moved to next state
+        try {
+          // TODO: skip this if calling has manually been advanced to a new state
+          //   we don't want to notify secretary if it's irrelevant
+          const result = await db.query(`
+            SELECT COUNT(*) AS total FROM approvals WHERE callingId = ? AND approved IS NULL
+          `, [approval.callingId]);
+          if (!result[0].total) {
+            await email.notifySecretary(`${approval.firstName} ${approval.lastName}`, approval.position, approval.state, approval.callingId);
+          }
+        }
+        catch (err) {
+          console.error(`Error attempting to notify secretaries for approval completion ${err}`);
+        }
       }
     }
-    catch (err) {
-      console.error(`Error attempting to notify secretaries for approval completion ${err}`);
-    }
+
 
     res.render("approval.pug", {
       stake: config.stake.name,
