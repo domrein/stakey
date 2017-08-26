@@ -328,16 +328,16 @@ exports.add = app => {
     }
 
     // get user info
-    let assigneeEmail = null;
+    let assignee = null;
     try {
       const rows = await db.query(`
-        SELECT email
+        SELECT id, firstName, lastName, email, level
         FROM users WHERE id = ? LIMIT 1
       `, [data.assignee]);
       if (!rows.length) {
         throw new Error("Invalid user");
       }
-      assigneeEmail = rows[0].email;
+      assignee = rows[0];
     }
     catch (err) {
       console.error(err);
@@ -346,9 +346,9 @@ exports.add = app => {
     }
 
     // get calling info
-    let rows = null;
+    let callingInfo = null;
     try {
-      rows = await db.query(`
+      const rows = await db.query(`
         SELECT
           id,
           state,
@@ -358,23 +358,23 @@ exports.add = app => {
           phoneNumber
         FROM callings WHERE id = ? LIMIT 1
       `, [data.id]);
+      if (!rows.length) {
+        console.error(`Unable to find calling with id ${data.id}`);
+        res.status(500).send();
+        return;
+      }
+      callingInfo = rows[0];
     }
     catch (err) {
       console.error(err);
       res.status(500).send();
       return;
     }
-    if (!rows.length) {
-      console.error(`Unable to find calling with id ${data.id}`);
-      res.status(500).send();
-      return;
-    }
-    const row = rows[0];
 
     const linkCode = code.generate(16);
 
     try {
-      await calling.updateState(row.id, true);
+      await calling.updateState(callingInfo.id, true);
     }
     catch (err) {
       console.error(err);
@@ -385,17 +385,17 @@ exports.add = app => {
     // send assignment email
     // this should be a single use link that only advanced from the current state to the next (so if the state is manually advanced, the link should do nothing)
     // this also needs to be reachable from someone not logged in
-    const candidate = `${row.firstName} ${row.lastName}`;
+    const candidate = `${callingInfo.firstName} ${callingInfo.lastName}`;
     const link = `${config.host}/assignment/${linkCode}`;
     try {
       email.send(
-        assigneeEmail,
+        assignee.email,
         `assignments@${config.hostname}`,
         `New ${assign.actionIdToNoun(data.action)} Assignment`,
-        `You have been assigned to conduct the ${assign.actionIdToNoun(data.action).toLowerCase()} for ${candidate} for ${row.position}. ${candidate} can be contacted at ${row.phoneNumber}. Please follow this link when you have completed the assignment. ${link}`,
+        `You have been assigned to conduct the ${assign.actionIdToNoun(data.action).toLowerCase()} for ${candidate} for ${callingInfo.position}. ${candidate} can be contacted at ${callingInfo.phoneNumber}. Please follow this link when you have completed the assignment. ${link}`,
         `
-          <p>You have been assigned to conduct the ${assign.actionIdToNoun(data.action).toLowerCase()} for ${candidate} for ${row.position}.</p>
-          <p>${candidate} can be contacted at ${row.phoneNumber}.</p>
+          <p>You have been assigned to conduct the ${assign.actionIdToNoun(data.action).toLowerCase()} for ${candidate} for ${callingInfo.position}.</p>
+          <p>${candidate} can be contacted at ${callingInfo.phoneNumber}.</p>
           <p>Please follow this link when you have completed the assignment.</p>
           <a href="${link}">${link}</a>
         `
@@ -407,12 +407,29 @@ exports.add = app => {
       return;
     }
 
+    // cc secretaries on stake presidency assignment
+    if (assignee.level === security.STAKE_PRESIDENCY) {
+      try {
+        await email.copySecretaries(
+          `${assignee.firstName} ${assignee.lastName}`,
+          `${callingInfo.firstName} ${callingInfo.lastName}`,
+          callingInfo.position,
+          callingInfo.state + 1
+        );
+      }
+      catch (err) {
+        console.error(err);
+        res.status(500).send();
+        return;
+      }
+    }
+
     // create assignment
     try {
       await db.query(`
         INSERT INTO assignments (userId, linkCode, callingId, callingState)
         VALUES (?, ?, ?, ?)
-      `, [data.assignee, linkCode, row.id, row.state + 1]);
+      `, [data.assignee, linkCode, callingInfo.id, callingInfo.state + 1]);
     }
     catch (err) {
       console.error(err);

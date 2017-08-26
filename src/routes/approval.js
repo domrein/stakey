@@ -69,7 +69,7 @@ exports.add = app => {
             SELECT COUNT(*) AS total FROM approvals WHERE callingId = ? AND approved IS NULL
           `, [approval.callingId]);
           if (!result[0].total) {
-            await email.notifySecretary(`${approval.firstName} ${approval.lastName}`, approval.position, approval.state, approval.callingId);
+            await email.pingSecretaries(`${approval.firstName} ${approval.lastName}`, approval.position, approval.state, approval.callingId);
           }
         }
         catch (err) {

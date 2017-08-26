@@ -31,13 +31,13 @@ const db = require("../controllers/database.js");
     return name;
   },
 
-  stateIdToAssignment(id) {
+  stateIdToAssignment(id, caps) {
     let name = "Unknown";
     switch (id) {
-      case 2: name =  "Interview"; break;
-      case 3: name =  "Sustain"; break;
-      case 4: name =  "Set Apart"; break;
-      case 5: name =  "Enter into MLS"; break;
+      case 2: name =  caps ? "Interview" : "interview"; break;
+      case 3: name =  caps ? "Sustain" : "sustain"; break;
+      case 4: name =  caps ? "Set Apart" : "set apart"; break;
+      case 5: name =  caps ? "Enter into MLS" : "enter into MLS"; break;
     }
 
     return name;

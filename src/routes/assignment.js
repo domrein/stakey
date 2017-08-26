@@ -65,7 +65,7 @@ exports.add = app => {
     // only email if assignment has not been deleted
     if (assignment.callingState === assignment.state && !assignment.deleted) {
       try {
-        await email.notifySecretary(`${assignment.firstName} ${assignment.lastName}`, assignment.position, assignment.state, assignment.callingId);
+        await email.pingSecretaries(`${assignment.firstName} ${assignment.lastName}`, assignment.position, assignment.state, assignment.callingId);
       }
       catch (err) {
         console.error(`Error attempting to notify secretaries for assignment completion ${err}`);
@@ -75,7 +75,7 @@ exports.add = app => {
     res.render("assignment.pug", {
       stake: config.stake.name,
       username: security.getUsername(req),
-      action: calling.stateIdToAssignment(assignment.callingState),
+      action: calling.stateIdToAssignment(assignment.callingState, false),
       newCompleted: !assignment.completed,
       candidate: `${assignment.firstName} ${assignment.lastName}`,
       position: assignment.position,

@@ -64,7 +64,7 @@ exports.add = app => {
       username: security.getUsername(req),
       callingId: row.id,
       action: calling.stateIdToAction(row.state + 1),
-      assignment: calling.stateIdToAssignment(row.state + 1),
+      assignment: calling.stateIdToAssignment(row.state + 1, true),
       candidate: `${row.firstName} ${row.lastName}`,
       position: row.position,
       assignees,
