@@ -6,6 +6,7 @@ const tean = require("tean");
 
 const db = require("../controllers/database.js");
 const security = require("../controllers/security.js");
+const calling = require("../controllers/calling.js");
 
 exports.add = app => {
   // view all callings
@@ -67,8 +68,8 @@ exports.add = app => {
             LIMIT 1
           ) AS assignedTo
         FROM callings c
-        WHERE c.state < 5 AND deleted = 0
-      `, []);
+        WHERE c.state < ? AND deleted = 0
+      `, [calling.states.complete]);
     }
     catch (err) {
       console.error(err);
@@ -91,23 +92,27 @@ exports.add = app => {
       canUpdateState: security.canUpdateCallingState(req),
       tables: [{
         name: "Pending Presidency Approval",
-        callings: rows.filter(r => r.state === 0),
+        callings: rows.filter(r => r.state === calling.states.stakePresidency),
         showCounts: true,
       }, {
         name: "Pending High Council Approval",
-        callings: rows.filter(r => r.state === 1),
+        callings: rows.filter(r => r.state === calling.states.highCouncil),
         showCounts: true,
       }, {
         name: "To Be Interviewed",
-        callings: rows.filter(r => r.state === 2),
+        callings: rows.filter(r => r.state === calling.states.interview),
         showCounts: false,
       }, {
         name: "To Be Sustained",
-        callings: rows.filter(r => r.state === 3),
+        callings: rows.filter(r => r.state === calling.states.sustaining),
         showCounts: false,
       }, {
         name: "To Be Set Apart",
-        callings: rows.filter(r => r.state === 4),
+        callings: rows.filter(r => r.state === calling.states.settingApart),
+        showCounts: false,
+      }, {
+        name: "Enter into MLS",
+        callings: rows.filter(r => r.state === calling.states.mls),
         showCounts: false,
       }],
     });

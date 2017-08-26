@@ -22,10 +22,10 @@ exports.add = app => {
           c.state,
           c.deleted
         FROM callings c
-        WHERE c.state = 5 OR c.deleted = 1
+        WHERE c.state = ? OR c.deleted = 1
         ORDER BY id DESC
         LIMIT 100
-      `, []);
+      `, [calling.states.complete]);
     }
     catch (err) {
       res.status(500).send();

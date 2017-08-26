@@ -13,7 +13,7 @@ exports.add = app => {
     let data = null;
     try {
       data = await tean.normalize({callingId: "int"}, req.params);
-      Object.assign(data, await tean.normalize({action: "string(interview,sustain,setApart)!null"}, req.query));
+      Object.assign(data, await tean.normalize({action: "string(interview,sustain,setApart,mls)!null"}, req.query));
     }
     catch (err) {
       console.warn(err);
@@ -64,6 +64,7 @@ exports.add = app => {
       username: security.getUsername(req),
       callingId: row.id,
       action: calling.stateIdToAction(row.state + 1),
+      assignment: calling.stateIdToAssignment(row.state + 1),
       candidate: `${row.firstName} ${row.lastName}`,
       position: row.position,
       assignees,

@@ -107,4 +107,6 @@ append content
               else if approval.state === 3
                 button(onclick=`assignCalling(${approval.id}, "setApart")`) Assign
               else if approval.state === 4
+                button(onclick=`assignCalling(${approval.id}, "mls")`) Assign
+              else if approval.state === 5
                 button(onclick=`advanceCalling(${approval.id})`) Complete

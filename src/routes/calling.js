@@ -251,9 +251,9 @@ exports.add = app => {
     if (callingState <= calling.minStateId && !data.advance) {
       res.status(400).send(`Unable to regress calling past ${calling.stateIdToName(callingState)}`);
     }
-    // use assign to move past high council
-    else if (callingState >= calling.states.highCouncil && data.advance) {
-      res.status(400).send(`Unable to advance calling past ${calling.stateIdToName(callingState)}`);
+    // use assign to move past high council (until complete)
+    else if (callingState >= calling.states.highCouncil && callingState < calling.states.mls && data.advance) {
+      res.status(400).send(`Unable to advance calling past ${calling.stateIdToName(callingState)} unless completing`);
     }
 
     // increment calling state
@@ -317,7 +317,7 @@ exports.add = app => {
     try {
       data = await tean.normalize({id: "int"}, req.params);
       Object.assign(data, await tean.normalize({
-        action: "string(interview,sustain,setApart)",
+        action: "string(interview,sustain,setApart,mls)",
         assignee: "int",
       }, req.body));
     }

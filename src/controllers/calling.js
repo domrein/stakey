@@ -4,7 +4,7 @@ const db = require("../controllers/database.js");
 
  module.exports = {
   minStateId: 0,
-  maxStateId: 5,
+  maxStateId: 6,
 
   states: {
     stakePresidency: 0,
@@ -12,7 +12,8 @@ const db = require("../controllers/database.js");
     interview: 2,
     sustaining: 3,
     settingApart: 4,
-    complete: 5,
+    mls: 5,
+    complete: 6,
   },
 
   stateIdToName(id) {
@@ -23,7 +24,8 @@ const db = require("../controllers/database.js");
       case 2: name =  "Pending Interview"; break;
       case 3: name =  "Pending Sustaining"; break;
       case 4: name =  "Pending Setting Apart"; break;
-      case 5: name =  "Complete"; break;
+      case 5: name =  "Enter into MLS"; break;
+      case 6: name =  "Complete"; break;
     }
 
     return name;
@@ -32,9 +34,10 @@ const db = require("../controllers/database.js");
   stateIdToAssignment(id) {
     let name = "Unknown";
     switch (id) {
-      case 2: name =  "interview"; break;
-      case 3: name =  "sustaining"; break;
-      case 4: name =  "setting Apart"; break;
+      case 2: name =  "Interview"; break;
+      case 3: name =  "Sustain"; break;
+      case 4: name =  "Set Apart"; break;
+      case 5: name =  "Enter into MLS"; break;
     }
 
     return name;
@@ -46,6 +49,7 @@ const db = require("../controllers/database.js");
       case 2: name =  "interview"; break;
       case 3: name =  "sustain"; break;
       case 4: name =  "setApart"; break;
+      case 5: name =  "mls"; break;
     }
 
     return name;
@@ -53,7 +57,7 @@ const db = require("../controllers/database.js");
 
   async updateState(id, advance) {
     if (advance) {
-      return await db.query("UPDATE callings SET state = state + 1 WHERE id = ? AND state < 5", [id]);
+      return await db.query("UPDATE callings SET state = state + 1 WHERE id = ? AND state < 6", [id]);
     }
     else {
       return await db.query("UPDATE callings SET state = state - 1 WHERE id = ? AND state > 0", [id]);
