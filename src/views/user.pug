@@ -1,0 +1,52 @@
+extends page.pug
+
+append head
+  script.
+    "use strict";
+    
+    let updatingUser = false;
+    const onUpdateUser = () => {
+      if (updatingUser) {
+        return;
+      }
+      updatingUser = true;
+      
+      const oReq = new XMLHttpRequest();
+      oReq.addEventListener("load", function() {
+        if (this.status !== 200) {
+          alert("Something went wrong. Please contact the system administrator.");
+          updatingUser = false;
+        }
+        window.location = "/users";
+      });
+      oReq.open("PUT", "/users/#{id}");
+      oReq.send(JSON.stringify({
+        firstName: document.getElementById("firstNameInput").value,
+        lastName: document.getElementById("lastNameInput").value,
+        email: document.getElementById("emailInput").value,
+        level: document.getElementById("levelSelect").value,
+        isSecretary: document.getElementById("isSecretaryInput").checked,
+      }));
+    };  
+
+append content
+  h1 Edit User
+  .horizontal-start-items
+    div First Name:
+    input#firstNameInput(type="text" value=`${firstName || "poop"}` maxlength="45")
+  .horizontal-start-items
+    div Last Name:
+    input#lastNameInput(type="text" value=`${lastName || ""}` maxlength="45")
+  .horizontal-start-items
+    div Email:
+    input#emailInput(type="text" value=`${email || ""}` maxlength="45")
+  .horizontal-start-items
+    div Access Level:
+    select#levelSelect
+      each accessLevel in levels
+        option(value=`${accessLevel.value}` selected=accessLevel.value === level) #{accessLevel.name}
+  .horizontal-start-items
+    div Is Clerk
+    input#isSecretaryInput(type="checkbox" checked=!!isSecretary)
+  .horizontal-spaced-items
+    button(onclick="onUpdateUser()") Update User

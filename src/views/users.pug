@@ -1,0 +1,35 @@
+extends page.pug
+
+append head
+  style.
+    tbody tr:nth-child(even) {
+      background-color: rgba(200, 200, 200, 0.5);
+    }
+    th {
+      width: 25%;
+    }
+    
+    tbody tr:hover:nth-child(n+2) {
+      background-color: #aeaeae;
+    }
+
+    table {
+      border-collapse: collapse
+    }
+
+append content
+  h1 Manage Users
+  table(style="width: 100%; text-align: center;")
+    tr
+      th First Name
+      th Last Name
+      th Email
+      th Access Level
+      th(title="Clerks are emailed whenever a member of the Stake Presidency receives an assignment") Is&nbsp;Clerk
+    each user in users
+      tr(onclick=`window.location = "/users/${user.id}"` style="cursor: pointer;")
+        td #{user.firstName}
+        td #{user.lastName}
+        td #{user.email}
+        td #{user.level}
+        td #{user.isSecretary}

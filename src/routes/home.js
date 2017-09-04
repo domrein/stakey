@@ -15,6 +15,7 @@ exports.add = app => {
       username: security.getUsername(req),
       canCreate: security.canCreateCalling(req),
       canRegister: security.canCreateRegistrationLink(req),
+      canManageUsers: security.canManageUsers(req),
     });
   });
 }
