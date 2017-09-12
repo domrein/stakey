@@ -62,8 +62,9 @@ html
   body
     #content
       div
-        a(href="/") Home
-        if username
-          span - Hi #{username}
+        block nav
+          a(href="/") Home
+          if username
+            span - Hi #{username}
         h3 #{stake}
       block content

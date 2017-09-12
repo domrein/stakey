@@ -82,7 +82,7 @@ append head
       oReq.send();      
     };
 
-append content
+append nav
   div(style="display: flex; justify-content: space-between;")
     a(href="/callings") View all Callings
     div(style="display: flex;")
@@ -90,8 +90,8 @@ append content
         button(onclick="onRegressCalling()") REGRESS CALLING
       if viewMode && canDelete
         button(onclick="onDeleteCalling()") DELETE CALLING
-  h3 #{stake}
 
+append content
   h1 Interview Recommendation Form
   .box.horizontal-spaced-items
     .vertical-items

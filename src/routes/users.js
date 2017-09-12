@@ -26,6 +26,7 @@ exports.add = app => {
       return;
     }
     render(res, "users.pug", {
+      username: security.getUsername(req),
       users,
     });
   });

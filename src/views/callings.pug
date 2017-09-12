@@ -63,12 +63,13 @@ append head
       oReq.send();
     };
 
-append content
+append nav
   div(style="display: flex; flex-direction: row; justify-content: space-between;")
     if canCreate
       a(href="/calling") Create a Calling
-  h3 #{stake}
 
+
+append content
   h1 Callings
   each table in tables
     h2 #{table.name}
