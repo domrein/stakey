@@ -36,7 +36,7 @@ exports.generateApprovals = async callingId => {
     console.error(`Cannot generate approvals for state ${state}`);
     throw new Error("INVALID_STATE");
   }
-  
+
   let users = null;
   try {
     // pull all relevant approvers
@@ -74,8 +74,8 @@ exports.generateApprovals = async callingId => {
             `Do you want to approve ${candidate} for ${position}? Approve: ${config.host}/approval/${e.code}?approved=true Discuss: ${config.host}/approval/${e.code}?approved=false`,
             `
             <p>Do you want to approve ${candidate} for ${position}?</p>
-            <div><a href="${config.host}/approval/${e.code}?approved=true">Approve</a></div>
-            <div><a href="${config.host}/approval/${e.code}?approved=false">Discuss</a></div>
+            <br><div><a href="${config.host}/approval/${e.code}?approved=true">Approve</a></div>
+            <br><br><div><a href="${config.host}/approval/${e.code}?approved=false">Discuss</a></div>
             `,
           );
         }
