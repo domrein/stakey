@@ -17,7 +17,7 @@ exports.add = app => {
         FROM users
       `);
       users.forEach(u => {
-        u.level = security.levelToName(u.level, true);
+        u.levelName = security.levelToName(u.level, true);
         u.isSecretary = u.isSecretary ? "Yes" : "No";
       });
     }

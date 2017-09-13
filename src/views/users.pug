@@ -2,34 +2,62 @@ extends page.pug
 
 append head
   style.
-    tbody tr:nth-child(even) {
-      background-color: rgba(200, 200, 200, 0.5);
-    }
     th {
       width: 25%;
     }
     
-    tbody tr:hover:nth-child(n+2) {
-      background-color: #aeaeae;
+    tbody tr:hover {
+      background-color: #aeaeae !important;
     }
 
     table {
       border-collapse: collapse
     }
+    
+    .hidden {
+      display: none;
+    }
+  
+  script.
+    const onShowNoAuthUsersClick = event => {
+      const show = document.getElementById("showNoAuthUsers").checked;
+      [...document.querySelectorAll("tbody tr")].forEach(r => {
+        r.classList.toggle("hidden", show
+          ? false
+          : r.getAttribute("data-user-level") === "0"
+        );
+      });
+      
+      [...document.querySelectorAll("tbody tr:not(.hidden)")].forEach((row, index) => {
+        if (index % 2) {
+          row.style.backgroundColor = "";
+        }
+        else {
+          row.style.backgroundColor = "rgba(200, 200, 200, 0.5)";
+        }
+      });
+    };
 
 append content
   h1 Manage Users
+  .horizontal-start-items
+    div Show Unauthorized Users
+    input(id="showNoAuthUsers" type="checkbox" onclick="onShowNoAuthUsersClick(event)")
   table(style="width: 100%; text-align: center;")
-    tr
-      th First Name
-      th Last Name
-      th Email
-      th Access Level
-      th(title="Clerks are emailed whenever a member of the Stake Presidency receives an assignment") Is&nbsp;Clerk
-    each user in users
-      tr(onclick=`window.location = "/users/${user.id}"` style="cursor: pointer;")
-        td #{user.firstName}
-        td #{user.lastName}
-        td #{user.email}
-        td #{user.level}
-        td #{user.isSecretary}
+    thead
+      tr
+        th First Name
+        th Last Name
+        th Email
+        th Access Level
+        th(title="Clerks are emailed whenever a member of the Stake Presidency receives an assignment") Is&nbsp;Clerk
+    tbody
+      each user in users
+        tr(onclick=`window.location = "/users/${user.id}"` style="cursor: pointer;" data-user-level=`${user.level}`)
+          td #{user.firstName}
+          td #{user.lastName}
+          td #{user.email}
+          td #{user.levelName}
+          td #{user.isSecretary}
+  script.
+    onShowNoAuthUsersClick();
