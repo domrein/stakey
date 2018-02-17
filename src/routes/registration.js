@@ -57,7 +57,7 @@ exports.add = app => {
     }
 
     try {
-      email.send(data.email, "registration@stakey.paulmilham.com", "Please Register Your Account", `
+      email.send(data.email, `registration@${config.hostname}`, "Please Register Your Account", `
         Congrats! You're almost ready to start using stakey. Follow this link ${config.host}/register/${registrationCode}
       `, `
         <h3>Congrats!</h3>
