@@ -32,7 +32,7 @@ app.use((req, res, next) => {
 app.use("/public", express.static(`${__dirname}/public`));
 
 // BUG: the default session store is in memory
-//   it does not scale beyound a single process
+//   it does not scale beyond a single process
 //   implement redis sessions https://www.npmjs.com/package/connect-redis
 let chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 let secret = "";
