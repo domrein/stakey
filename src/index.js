@@ -76,8 +76,8 @@ require("./routes/registration.js").add(app);
 require("./routes/users.js").add(app);
 
 app.use((req, res, next) => {
-  res.render("missing.pug", {stake: config.stake.name});
-})
+  res.status(404).render("missing.pug", {stake: config.stake.name});
+});
 
 app.listen(config.port);
 console.log(`app listening on port ${config.port}`);
