@@ -41,7 +41,7 @@ exports.add = app => {
     });
   });
 
-  app.delete("/passwordReset/:code", security.authorize(security.USER), async (req, res) => {
+  app.delete("/passwordReset/:code", security.authorize(security.UNAUTHORIZED), async (req, res) => {
     let data = null;
     try {
       data = await tean.normalize({code: "string(16)", passwordHash: "string(32)"}, req.body);
