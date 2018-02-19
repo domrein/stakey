@@ -3,11 +3,11 @@
 const config = require("../../config.json");
 
 const tean = require("tean");
-const crypto = require("crypto");
 
 const db = require("../controllers/database.js");
 const security = require("../controllers/security.js");
 const code = require("../utils/code.js");
+const hash = require("../utils/hash.js");
 
 exports.add = app => {
   app.get("/register/:code", security.authorize(security.UNAUTHORIZED), async (req, res) => {
@@ -74,12 +74,7 @@ exports.add = app => {
 
     if (rows.length) {
       const salt = code.generate(32);
-      // create hash from password + salt
-
-      const hash = crypto.createHash("sha512");
-      hash.update(data.passwordHash);
-      hash.update(salt);
-      const passwordHash = hash.digest("hex");
+      const passwordHash = hash.salt(salt, data.passwordHash);
 
       // add user
       try {

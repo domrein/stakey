@@ -28,6 +28,35 @@ append head
         isSecretary: document.getElementById("isSecretaryInput").checked,
       }));
     };  
+    
+    let sendingPasswordResetEmail = false;
+    const onSendPasswordResetEmail = () => {
+      if (sendingPasswordResetEmail) {
+        return;
+      }
+      sendingPasswordResetEmail = true;
+      
+      const oReq = new XMLHttpRequest();
+      oReq.addEventListener("load", function() {
+        if (this.status !== 200) {
+          alert("Something went wrong. Please contact the system administrator.");
+          sendingPasswordResetEmail = false;
+        }
+        else {
+          alert("Successfully sent password reset email.");
+          window.location = "/users";
+          
+        }
+      });
+      oReq.open("POST", "/passwordReset");
+      oReq.send(JSON.stringify({
+        userId: #{id},
+      }));
+    };  
+
+append nav
+  div(style="display: flex; justify-content: flex-end;")
+    button(onclick="onSendPasswordResetEmail()") Send Password Reset Email
 
 append content
   h1 Edit User

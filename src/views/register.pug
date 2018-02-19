@@ -3,14 +3,12 @@ extends page.pug
 append head
   script(src="../public/md5.js")
   script.
-    // code: "string(16)",
-    // passwordHash: "string(32)",
-    // email: "email",
-    // firstName: "string(45)",
-    // lastName: "string(45)",
-
     const onRegister = () => {
-      console.log(md5(document.getElementById("passwordInput").value));
+      if (document.getElementById("passwordInput").value !== document.getElementById("passwordInput2").value) {
+        alert("Passwords do not match. Please enter the same password twice.");
+        return;
+      }
+
       const oReq = new XMLHttpRequest();
       oReq.addEventListener("load", function() {
         if (this.status === 200) {
@@ -40,7 +38,6 @@ append content
       input#lastNameInput(type="text" value="" style="width: 220px;")
       div Email:
       input#emailInput(type="email" value="" style="width: 220px;")
-      //- TODO: check if both passwords match
       div Password:
       input#passwordInput(type="password" value="" style="width: 220px;")
       div Confirm Password:

@@ -71,6 +71,7 @@ require("./routes/callings.js").add(app);
 require("./routes/history.js").add(app);
 require("./routes/home.js").add(app);
 require("./routes/login.js").add(app);
+require("./routes/passwordReset.js").add(app);
 require("./routes/register.js").add(app);
 require("./routes/registration.js").add(app);
 require("./routes/users.js").add(app);
