@@ -17,6 +17,18 @@ const app = express();
 app.set("views", `${__dirname}/views`);
 app.set("view engine", "pug");
 
+app.use((req, res, next) => {
+  res.locals.id = Date.now();
+  console.log(`-> #${res.locals.id} ${req.method} ${req.originalUrl}`);
+  next();
+
+  const onResponse = () => {
+    console.log(`<- #${res.locals.id} ${req.method} ${req.originalUrl} ${res.statusCode}`);
+  };
+  res.on("finish", onResponse);
+  res.on("close", onResponse);
+});
+
 app.use("/public", express.static(`${__dirname}/public`));
 
 // BUG: the default session store is in memory
