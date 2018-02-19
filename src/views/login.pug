@@ -4,7 +4,6 @@ append head
   script(src="../public/md5.js")
   script.
     const onLogin = () => {
-      console.log(md5(document.getElementById("passwordInput").value));
       const oReq = new XMLHttpRequest();
       oReq.addEventListener("load", function() {
         if (this.status === 401) {
